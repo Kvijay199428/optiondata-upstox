@@ -1,0 +1,812 @@
+2024-12-30 13:25:00,203 - INFO - Starting real-time data insertion script.
+2024-12-30 13:25:00,219 - DEBUG - Checking if the database exists.
+2024-12-30 13:25:00,509 - INFO - Database connected successfully.
+2024-12-30 13:25:00,516 - INFO - Database optionChain already exists.
+2024-12-30 13:25:01,517 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:01,626 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:01,627 - INFO - Starting data fetching...
+2024-12-30 13:25:01,629 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:03,433 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:03,437 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:04,154 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:04,154 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:04,157 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:05,696 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:05,698 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:05,701 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:06,702 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:06,702 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:06,702 - INFO - Starting data fetching...
+2024-12-30 13:25:06,704 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:08,418 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:08,423 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:08,424 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:08,424 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:08,426 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:10,397 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:10,398 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:10,401 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:11,409 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:11,409 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:11,409 - INFO - Starting data fetching...
+2024-12-30 13:25:11,413 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:13,470 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:13,475 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:13,476 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:13,477 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:13,478 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:15,506 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:15,507 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:15,510 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:16,514 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:16,547 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:16,547 - INFO - Starting data fetching...
+2024-12-30 13:25:16,549 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:18,710 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:18,714 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:18,716 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:18,716 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:18,718 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:21,012 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:21,014 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:21,017 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:22,030 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:22,031 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:22,031 - INFO - Starting data fetching...
+2024-12-30 13:25:22,034 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:23,911 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:23,916 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:23,917 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:23,918 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:23,920 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:26,363 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:26,364 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:26,368 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:27,374 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:27,375 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:27,375 - INFO - Starting data fetching...
+2024-12-30 13:25:27,402 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:29,329 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:29,334 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:29,335 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:29,336 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:29,338 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:31,887 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:31,888 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:31,891 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:32,916 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:32,916 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:32,916 - INFO - Starting data fetching...
+2024-12-30 13:25:32,936 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:35,254 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:35,257 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:35,259 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:35,259 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:35,260 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:38,021 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:38,023 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:38,026 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:39,029 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:39,030 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:39,030 - INFO - Starting data fetching...
+2024-12-30 13:25:39,033 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:40,665 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:40,669 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:40,671 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:40,671 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:40,673 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:42,627 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:42,629 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:42,631 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:43,638 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:43,639 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:43,639 - INFO - Starting data fetching...
+2024-12-30 13:25:43,642 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:45,658 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:45,663 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:45,664 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:45,664 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:45,666 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:48,039 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:48,041 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:48,044 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:49,060 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:49,060 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:49,060 - INFO - Starting data fetching...
+2024-12-30 13:25:49,063 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:51,361 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:51,365 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:51,366 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:51,366 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:51,368 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:53,786 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:25:53,787 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:25:53,790 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:25:54,794 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:25:54,795 - INFO - Market is open. Fetching data.
+2024-12-30 13:25:54,795 - INFO - Starting data fetching...
+2024-12-30 13:25:54,799 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:25:57,660 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:25:57,664 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:25:57,666 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:25:57,666 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:25:57,668 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:00,407 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:26:00,408 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:26:00,411 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:26:01,432 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:26:01,446 - INFO - Market is open. Fetching data.
+2024-12-30 13:26:01,448 - INFO - Starting data fetching...
+2024-12-30 13:26:01,453 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:03,379 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:26:03,383 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:26:03,385 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:26:03,385 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:26:03,387 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:05,328 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:26:05,329 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:26:05,332 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:26:06,335 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:26:06,335 - INFO - Market is open. Fetching data.
+2024-12-30 13:26:06,336 - INFO - Starting data fetching...
+2024-12-30 13:26:06,344 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:08,464 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:26:08,469 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:26:08,471 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:26:08,471 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:26:08,473 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:10,231 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:26:10,232 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:26:10,235 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:26:11,241 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:26:11,241 - INFO - Market is open. Fetching data.
+2024-12-30 13:26:11,241 - INFO - Starting data fetching...
+2024-12-30 13:26:11,243 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:12,723 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:26:12,727 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:26:12,729 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:26:12,729 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:26:12,731 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:14,322 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:26:14,324 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:26:14,327 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:26:15,329 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:26:15,330 - INFO - Market is open. Fetching data.
+2024-12-30 13:26:15,330 - INFO - Starting data fetching...
+2024-12-30 13:26:15,335 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:17,052 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:26:17,056 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:26:17,057 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:26:17,058 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:26:17,059 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:18,956 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:26:18,958 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:26:18,961 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:26:19,963 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:26:19,963 - INFO - Market is open. Fetching data.
+2024-12-30 13:26:19,963 - INFO - Starting data fetching...
+2024-12-30 13:26:19,965 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:21,233 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:26:21,237 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:26:21,238 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:26:21,239 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:26:21,240 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:22,872 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:26:22,873 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:26:22,876 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:26:23,878 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:26:23,878 - INFO - Market is open. Fetching data.
+2024-12-30 13:26:23,879 - INFO - Starting data fetching...
+2024-12-30 13:26:23,881 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:25,382 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:26:25,386 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:26:25,388 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:26:25,388 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:26:25,390 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:26:27,203 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:26:27,205 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:26:27,208 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:26:28,213 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:26:28,213 - INFO - Market is open. Fetching data.
+2024-12-30 13:26:28,213 - INFO - Starting data fetching...
+2024-12-30 13:26:28,218 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:33:40,854 - INFO - Starting real-time data insertion script.
+2024-12-30 13:33:40,856 - DEBUG - Checking if the database exists.
+2024-12-30 13:33:41,838 - INFO - Database connected successfully.
+2024-12-30 13:33:41,844 - INFO - Database optionChain already exists.
+2024-12-30 13:33:42,863 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:33:43,158 - INFO - Market is open. Fetching data.
+2024-12-30 13:33:43,158 - INFO - Starting data fetching...
+2024-12-30 13:33:43,160 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:33:45,049 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:33:45,054 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:33:47,207 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:33:47,208 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:33:47,210 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:33:48,922 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:33:48,923 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:33:48,926 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:33:49,969 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:33:49,969 - INFO - Market is open. Fetching data.
+2024-12-30 13:33:49,970 - INFO - Starting data fetching...
+2024-12-30 13:33:49,972 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:33:51,989 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:33:51,994 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:33:51,995 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:33:51,996 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:33:51,998 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:33:54,167 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:33:54,168 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:33:54,171 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:33:55,191 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:33:55,191 - INFO - Market is open. Fetching data.
+2024-12-30 13:33:55,193 - INFO - Starting data fetching...
+2024-12-30 13:33:55,199 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:33:57,637 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:33:57,641 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:33:57,643 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:33:57,643 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:33:57,645 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:00,646 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:00,647 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:00,651 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:01,654 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:01,660 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:01,660 - INFO - Starting data fetching...
+2024-12-30 13:34:01,667 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:03,834 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:03,838 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:03,839 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:03,839 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:03,841 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:06,085 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:06,086 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:06,090 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:07,126 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:07,126 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:07,126 - INFO - Starting data fetching...
+2024-12-30 13:34:07,138 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:09,760 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:09,765 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:09,767 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:09,767 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:09,769 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:11,972 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:11,974 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:11,977 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:12,992 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:12,992 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:12,997 - INFO - Starting data fetching...
+2024-12-30 13:34:12,999 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:15,132 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:15,136 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:15,137 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:15,138 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:15,140 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:17,816 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:17,817 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:17,820 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:18,852 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:18,852 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:18,852 - INFO - Starting data fetching...
+2024-12-30 13:34:18,854 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:21,115 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:21,119 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:21,120 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:21,121 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:21,123 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:23,135 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:23,136 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:23,140 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:24,189 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:24,190 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:24,190 - INFO - Starting data fetching...
+2024-12-30 13:34:24,192 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:26,597 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:26,601 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:26,603 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:26,604 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:26,605 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:29,006 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:29,007 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:29,010 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:30,049 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:30,050 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:30,050 - INFO - Starting data fetching...
+2024-12-30 13:34:30,052 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:31,810 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:31,814 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:31,815 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:31,815 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:31,817 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:33,851 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:33,853 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:33,856 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:34,864 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:34,864 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:34,864 - INFO - Starting data fetching...
+2024-12-30 13:34:34,867 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:36,334 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:36,338 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:36,339 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:36,340 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:36,341 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:38,742 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:38,743 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:38,746 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:39,764 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:39,764 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:39,766 - INFO - Starting data fetching...
+2024-12-30 13:34:39,767 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:41,427 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:41,431 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:41,433 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:41,433 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:41,435 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:43,717 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:43,719 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:43,721 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:44,770 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:44,770 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:44,771 - INFO - Starting data fetching...
+2024-12-30 13:34:44,773 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:46,790 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:46,794 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:46,795 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:46,795 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:46,797 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:48,954 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:48,955 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:48,958 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:50,040 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:50,041 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:50,041 - INFO - Starting data fetching...
+2024-12-30 13:34:50,045 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:51,974 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:51,978 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:51,979 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:51,980 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:51,982 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:54,541 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:34:54,542 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:34:54,545 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:34:55,571 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:34:55,571 - INFO - Market is open. Fetching data.
+2024-12-30 13:34:55,571 - INFO - Starting data fetching...
+2024-12-30 13:34:55,588 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:34:57,751 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:34:57,755 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:34:57,756 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:34:57,757 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:34:57,759 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:00,194 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:35:00,196 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:35:00,199 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:35:01,223 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:35:01,223 - INFO - Market is open. Fetching data.
+2024-12-30 13:35:01,224 - INFO - Starting data fetching...
+2024-12-30 13:35:01,226 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:03,312 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:35:03,316 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:35:03,318 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:35:03,318 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:35:03,320 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:05,490 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:35:05,492 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:35:05,495 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:35:06,530 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:35:06,531 - INFO - Market is open. Fetching data.
+2024-12-30 13:35:06,531 - INFO - Starting data fetching...
+2024-12-30 13:35:06,582 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:09,435 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:35:09,439 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:35:09,441 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:35:09,441 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:35:09,443 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:12,285 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:35:12,288 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:35:12,293 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:35:13,340 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:35:13,340 - INFO - Market is open. Fetching data.
+2024-12-30 13:35:13,340 - INFO - Starting data fetching...
+2024-12-30 13:35:13,346 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:15,255 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:35:15,259 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:35:15,261 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:35:15,261 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:35:15,263 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:17,455 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:35:17,456 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:35:17,458 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:35:18,459 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:35:18,460 - INFO - Market is open. Fetching data.
+2024-12-30 13:35:18,460 - INFO - Starting data fetching...
+2024-12-30 13:35:18,462 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:20,261 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:35:20,268 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:35:20,269 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:35:20,270 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:35:20,272 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:23,174 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:35:23,175 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:35:23,180 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:35:24,286 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:35:24,287 - INFO - Market is open. Fetching data.
+2024-12-30 13:35:24,287 - INFO - Starting data fetching...
+2024-12-30 13:35:24,291 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:26,656 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:35:26,659 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:35:26,661 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:35:26,661 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:35:26,663 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:28,778 - DEBUG - https://api.upstox.com:443 "GET /v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27 HTTP/11" 200 None
+2024-12-30 13:35:28,779 - DEBUG - Request URL: https://api.upstox.com/v2/option/chain?instrument_key=NSE_INDEX%7CNifty+Next+50&expiry_date=2024-12-27
+2024-12-30 13:35:28,782 - DEBUG - Data fetched successfully: {'status': 'success', 'data': []}
+2024-12-30 13:35:29,790 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:35:29,790 - INFO - Market is open. Fetching data.
+2024-12-30 13:35:29,791 - INFO - Starting data fetching...
+2024-12-30 13:35:29,793 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:35:32,136 - DEBUG - https://api.upstox.com:443 "GET /v2/market/holidays/2024-12-30 HTTP/11" 200 None
+2024-12-30 13:35:32,140 - ERROR - Error: Holiday response is None. Skipping holiday check.
+2024-12-30 13:35:32,141 - INFO - Last Friday expiry date is 2024-12-27.
+2024-12-30 13:35:32,141 - DEBUG - Expiry Date is 2024-12-27.
+2024-12-30 13:35:32,144 - DEBUG - Starting new HTTPS connection (1): api.upstox.com:443
+2024-12-30 13:36:42,840 - INFO - Starting real-time data insertion script.
+2024-12-30 13:36:42,841 - DEBUG - Checking if the database exists.
+2024-12-30 13:36:43,174 - INFO - Database connected successfully.
+2024-12-30 13:36:43,203 - INFO - Database optionChain already exists.
+2024-12-30 13:36:44,204 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:44,323 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:44,323 - INFO - Starting data fetching...
+2024-12-30 13:36:44,323 - ERROR - Access token file not found.
+2024-12-30 13:36:44,324 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:45,325 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:45,325 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:45,325 - INFO - Starting data fetching...
+2024-12-30 13:36:45,326 - ERROR - Access token file not found.
+2024-12-30 13:36:45,326 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:46,327 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:46,327 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:46,327 - INFO - Starting data fetching...
+2024-12-30 13:36:46,327 - ERROR - Access token file not found.
+2024-12-30 13:36:46,327 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:47,328 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:47,328 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:47,328 - INFO - Starting data fetching...
+2024-12-30 13:36:47,328 - ERROR - Access token file not found.
+2024-12-30 13:36:47,328 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:48,330 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:48,330 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:48,330 - INFO - Starting data fetching...
+2024-12-30 13:36:48,331 - ERROR - Access token file not found.
+2024-12-30 13:36:48,331 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:49,331 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:49,331 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:49,332 - INFO - Starting data fetching...
+2024-12-30 13:36:49,332 - ERROR - Access token file not found.
+2024-12-30 13:36:49,332 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:50,332 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:50,332 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:50,332 - INFO - Starting data fetching...
+2024-12-30 13:36:50,332 - ERROR - Access token file not found.
+2024-12-30 13:36:50,332 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:51,334 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:51,334 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:51,334 - INFO - Starting data fetching...
+2024-12-30 13:36:51,334 - ERROR - Access token file not found.
+2024-12-30 13:36:51,334 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:52,334 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:52,334 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:52,334 - INFO - Starting data fetching...
+2024-12-30 13:36:52,334 - ERROR - Access token file not found.
+2024-12-30 13:36:52,334 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:53,334 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:53,334 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:53,334 - INFO - Starting data fetching...
+2024-12-30 13:36:53,334 - ERROR - Access token file not found.
+2024-12-30 13:36:53,334 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:54,336 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:54,338 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:54,338 - INFO - Starting data fetching...
+2024-12-30 13:36:54,338 - ERROR - Access token file not found.
+2024-12-30 13:36:54,339 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:55,339 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:55,339 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:55,339 - INFO - Starting data fetching...
+2024-12-30 13:36:55,339 - ERROR - Access token file not found.
+2024-12-30 13:36:55,340 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:56,340 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:56,340 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:56,340 - INFO - Starting data fetching...
+2024-12-30 13:36:56,340 - ERROR - Access token file not found.
+2024-12-30 13:36:56,340 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:57,342 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:57,342 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:57,342 - INFO - Starting data fetching...
+2024-12-30 13:36:57,342 - ERROR - Access token file not found.
+2024-12-30 13:36:57,342 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:58,343 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:58,343 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:58,343 - INFO - Starting data fetching...
+2024-12-30 13:36:58,343 - ERROR - Access token file not found.
+2024-12-30 13:36:58,343 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:36:59,345 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:36:59,345 - INFO - Market is open. Fetching data.
+2024-12-30 13:36:59,345 - INFO - Starting data fetching...
+2024-12-30 13:36:59,345 - ERROR - Access token file not found.
+2024-12-30 13:36:59,345 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:00,347 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:00,347 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:00,347 - INFO - Starting data fetching...
+2024-12-30 13:37:00,347 - ERROR - Access token file not found.
+2024-12-30 13:37:00,347 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:01,348 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:01,348 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:01,348 - INFO - Starting data fetching...
+2024-12-30 13:37:01,348 - ERROR - Access token file not found.
+2024-12-30 13:37:01,348 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:02,350 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:02,350 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:02,350 - INFO - Starting data fetching...
+2024-12-30 13:37:02,350 - ERROR - Access token file not found.
+2024-12-30 13:37:02,350 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:03,351 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:03,351 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:03,351 - INFO - Starting data fetching...
+2024-12-30 13:37:03,351 - ERROR - Access token file not found.
+2024-12-30 13:37:03,351 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:04,353 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:04,353 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:04,353 - INFO - Starting data fetching...
+2024-12-30 13:37:04,353 - ERROR - Access token file not found.
+2024-12-30 13:37:04,353 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:05,354 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:05,354 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:05,354 - INFO - Starting data fetching...
+2024-12-30 13:37:05,354 - ERROR - Access token file not found.
+2024-12-30 13:37:05,355 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:06,355 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:06,355 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:06,355 - INFO - Starting data fetching...
+2024-12-30 13:37:06,355 - ERROR - Access token file not found.
+2024-12-30 13:37:06,356 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:07,357 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:07,357 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:07,357 - INFO - Starting data fetching...
+2024-12-30 13:37:07,357 - ERROR - Access token file not found.
+2024-12-30 13:37:07,357 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:08,358 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:08,358 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:08,358 - INFO - Starting data fetching...
+2024-12-30 13:37:08,358 - ERROR - Access token file not found.
+2024-12-30 13:37:08,359 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:09,360 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:09,360 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:09,360 - INFO - Starting data fetching...
+2024-12-30 13:37:09,360 - ERROR - Access token file not found.
+2024-12-30 13:37:09,360 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:10,361 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:10,361 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:10,361 - INFO - Starting data fetching...
+2024-12-30 13:37:10,361 - ERROR - Access token file not found.
+2024-12-30 13:37:10,361 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:11,363 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:11,363 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:11,363 - INFO - Starting data fetching...
+2024-12-30 13:37:11,363 - ERROR - Access token file not found.
+2024-12-30 13:37:11,363 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:12,364 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:12,364 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:12,364 - INFO - Starting data fetching...
+2024-12-30 13:37:12,364 - ERROR - Access token file not found.
+2024-12-30 13:37:12,364 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:13,366 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:13,366 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:13,366 - INFO - Starting data fetching...
+2024-12-30 13:37:13,366 - ERROR - Access token file not found.
+2024-12-30 13:37:13,366 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:14,367 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:14,367 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:14,367 - INFO - Starting data fetching...
+2024-12-30 13:37:14,367 - ERROR - Access token file not found.
+2024-12-30 13:37:14,367 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:15,368 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:15,368 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:15,368 - INFO - Starting data fetching...
+2024-12-30 13:37:15,368 - ERROR - Access token file not found.
+2024-12-30 13:37:15,368 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:16,370 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:16,370 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:16,370 - INFO - Starting data fetching...
+2024-12-30 13:37:16,370 - ERROR - Access token file not found.
+2024-12-30 13:37:16,370 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:17,371 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:17,371 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:17,371 - INFO - Starting data fetching...
+2024-12-30 13:37:17,371 - ERROR - Access token file not found.
+2024-12-30 13:37:17,371 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:18,372 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:18,372 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:18,372 - INFO - Starting data fetching...
+2024-12-30 13:37:18,372 - ERROR - Access token file not found.
+2024-12-30 13:37:18,372 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:19,373 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:19,373 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:19,373 - INFO - Starting data fetching...
+2024-12-30 13:37:19,373 - ERROR - Access token file not found.
+2024-12-30 13:37:19,373 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:20,374 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:20,374 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:20,374 - INFO - Starting data fetching...
+2024-12-30 13:37:20,374 - ERROR - Access token file not found.
+2024-12-30 13:37:20,374 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:21,376 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:21,376 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:21,377 - INFO - Starting data fetching...
+2024-12-30 13:37:21,377 - ERROR - Access token file not found.
+2024-12-30 13:37:21,377 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:22,377 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:22,377 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:22,377 - INFO - Starting data fetching...
+2024-12-30 13:37:22,378 - ERROR - Access token file not found.
+2024-12-30 13:37:22,378 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:23,490 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:23,491 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:23,497 - INFO - Starting data fetching...
+2024-12-30 13:37:23,497 - ERROR - Access token file not found.
+2024-12-30 13:37:23,498 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:24,540 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:24,540 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:24,540 - INFO - Starting data fetching...
+2024-12-30 13:37:24,541 - ERROR - Access token file not found.
+2024-12-30 13:37:24,541 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:25,541 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:25,541 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:25,541 - INFO - Starting data fetching...
+2024-12-30 13:37:25,541 - ERROR - Access token file not found.
+2024-12-30 13:37:25,541 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:26,543 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:26,543 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:26,543 - INFO - Starting data fetching...
+2024-12-30 13:37:26,543 - ERROR - Access token file not found.
+2024-12-30 13:37:26,543 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:27,544 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:27,544 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:27,544 - INFO - Starting data fetching...
+2024-12-30 13:37:27,545 - ERROR - Access token file not found.
+2024-12-30 13:37:27,545 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:28,545 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:28,545 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:28,545 - INFO - Starting data fetching...
+2024-12-30 13:37:28,545 - ERROR - Access token file not found.
+2024-12-30 13:37:28,545 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:29,545 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:29,545 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:29,546 - INFO - Starting data fetching...
+2024-12-30 13:37:29,547 - ERROR - Access token file not found.
+2024-12-30 13:37:29,547 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:30,548 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:30,548 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:30,548 - INFO - Starting data fetching...
+2024-12-30 13:37:30,548 - ERROR - Access token file not found.
+2024-12-30 13:37:30,548 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:31,550 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:31,551 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:31,552 - INFO - Starting data fetching...
+2024-12-30 13:37:31,552 - ERROR - Access token file not found.
+2024-12-30 13:37:31,552 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:32,552 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:32,552 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:32,552 - INFO - Starting data fetching...
+2024-12-30 13:37:32,553 - ERROR - Access token file not found.
+2024-12-30 13:37:32,553 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:33,573 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:33,574 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:33,574 - INFO - Starting data fetching...
+2024-12-30 13:37:33,574 - ERROR - Access token file not found.
+2024-12-30 13:37:33,575 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:34,577 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:34,578 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:34,578 - INFO - Starting data fetching...
+2024-12-30 13:37:34,578 - ERROR - Access token file not found.
+2024-12-30 13:37:34,578 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:35,634 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:35,634 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:35,636 - INFO - Starting data fetching...
+2024-12-30 13:37:35,637 - ERROR - Access token file not found.
+2024-12-30 13:37:35,638 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:36,639 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:36,639 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:36,639 - INFO - Starting data fetching...
+2024-12-30 13:37:36,641 - ERROR - Access token file not found.
+2024-12-30 13:37:36,651 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:37,653 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:37,653 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:37,653 - INFO - Starting data fetching...
+2024-12-30 13:37:37,654 - ERROR - Access token file not found.
+2024-12-30 13:37:37,654 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:38,656 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:38,656 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:38,656 - INFO - Starting data fetching...
+2024-12-30 13:37:38,656 - ERROR - Access token file not found.
+2024-12-30 13:37:38,657 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:39,658 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:39,660 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:39,661 - INFO - Starting data fetching...
+2024-12-30 13:37:39,661 - ERROR - Access token file not found.
+2024-12-30 13:37:39,661 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:40,667 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:40,670 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:40,670 - INFO - Starting data fetching...
+2024-12-30 13:37:40,670 - ERROR - Access token file not found.
+2024-12-30 13:37:40,671 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:41,672 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:41,673 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:41,673 - INFO - Starting data fetching...
+2024-12-30 13:37:41,673 - ERROR - Access token file not found.
+2024-12-30 13:37:41,673 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:42,675 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:42,680 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:42,681 - INFO - Starting data fetching...
+2024-12-30 13:37:42,682 - ERROR - Access token file not found.
+2024-12-30 13:37:42,682 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:43,682 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:43,682 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:43,682 - INFO - Starting data fetching...
+2024-12-30 13:37:43,683 - ERROR - Access token file not found.
+2024-12-30 13:37:43,683 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:44,704 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:44,704 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:44,704 - INFO - Starting data fetching...
+2024-12-30 13:37:44,705 - ERROR - Access token file not found.
+2024-12-30 13:37:44,705 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:45,736 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:45,736 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:45,736 - INFO - Starting data fetching...
+2024-12-30 13:37:45,737 - ERROR - Access token file not found.
+2024-12-30 13:37:45,737 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:46,738 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:46,738 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:46,738 - INFO - Starting data fetching...
+2024-12-30 13:37:46,739 - ERROR - Access token file not found.
+2024-12-30 13:37:46,739 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:47,740 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:47,741 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:47,741 - INFO - Starting data fetching...
+2024-12-30 13:37:47,745 - ERROR - Access token file not found.
+2024-12-30 13:37:47,745 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:48,768 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:48,768 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:48,768 - INFO - Starting data fetching...
+2024-12-30 13:37:48,769 - ERROR - Access token file not found.
+2024-12-30 13:37:48,769 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:49,788 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:49,789 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:49,789 - INFO - Starting data fetching...
+2024-12-30 13:37:49,789 - ERROR - Access token file not found.
+2024-12-30 13:37:49,789 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:50,820 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:50,820 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:50,820 - INFO - Starting data fetching...
+2024-12-30 13:37:50,821 - ERROR - Access token file not found.
+2024-12-30 13:37:50,821 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:51,851 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:51,851 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:51,873 - INFO - Starting data fetching...
+2024-12-30 13:37:51,873 - ERROR - Access token file not found.
+2024-12-30 13:37:51,873 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:52,930 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:52,932 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:52,932 - INFO - Starting data fetching...
+2024-12-30 13:37:52,932 - ERROR - Access token file not found.
+2024-12-30 13:37:52,932 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:53,939 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:53,940 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:53,940 - INFO - Starting data fetching...
+2024-12-30 13:37:53,941 - ERROR - Access token file not found.
+2024-12-30 13:37:53,941 - ERROR - API error or unexpected response format: {}
+2024-12-30 13:37:54,948 - DEBUG - Running job Job(interval=1, unit=seconds, do=fetch_and_insert_data, args=(), kwargs={})
+2024-12-30 13:37:54,950 - INFO - Market is open. Fetching data.
+2024-12-30 13:37:54,950 - INFO - Starting data fetching...
+2024-12-30 13:37:54,950 - ERROR - Access token file not found.
+2024-12-30 13:37:54,951 - ERROR - API error or unexpected response format: {}
