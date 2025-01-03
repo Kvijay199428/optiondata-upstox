@@ -13,6 +13,7 @@ import schedule
 import pytz
 import holidays
 from market_holiday_date_wise import market_holiday_date_wise
+from pathlib import Path
 
 # Call the function
 market_holiday_date_wise()
@@ -327,13 +328,25 @@ def insert_data_into_db(db_config, table_name, data):
 
 # Fetch and process data from API
 class OptionChainFetcher:
+
     def fetch_data(self):
+    # Get the current file's directory and construct relative path
+        current_dir = Path(__file__).parent
+        token_path = current_dir / 'api' / 'token' / 'accessToken_order.txt'
+    
         try:
-            with open('api/token/accessToken_OC.txt', 'r') as file:
+            with open(token_path, 'r') as file:
                 access_token = file.read().strip()
         except FileNotFoundError:
             logging.error("Access token file not found.")
             return {}
+
+#        try:
+ #           with open('api/token/accessToken_OC.txt', 'r') as file:
+  #              access_token = file.read().strip()
+   #     except FileNotFoundError:
+    #        logging.error("Access token file not found.")
+     #       return {}
 
         now = datetime.now()
         expiry_date = get_next_friday(now.year, now.month)
@@ -412,16 +425,119 @@ def fetch_and_insert_data():
         logging.info("Market is closed. Stopping script.")
         exit()
 
+def convert_milliseconds_to_time(milliseconds):
+    """Convert milliseconds timestamp to datetime object in IST."""
+    try:
+        seconds = milliseconds / 1000
+        dt = datetime.fromtimestamp(seconds, pytz.timezone('Asia/Kolkata'))
+        logging.info(f"Converted milliseconds {milliseconds} to datetime: {dt}")
+        return dt
+    except Exception as e:
+        logging.error(f"Error converting milliseconds {milliseconds}: {e}")
+        return None
+
+def parse_exchange_timings(holiday_data):
+    """Parse exchange timings from holiday data."""
+    try:
+        for exchange_info in holiday_data.get('open_exchanges', []):
+            if isinstance(exchange_info, str):
+                # Parse the string format "NSE (Start: 1735703100000, End: 1735725600000)"
+                parts = exchange_info.split('(')
+                exchange_name = parts[0].strip()
+                if exchange_name == 'NSE':
+                    timing_parts = parts[1].strip(')').split(',')
+                    start_ms = int(timing_parts[0].split(':')[1].strip())
+                    end_ms = int(timing_parts[1].split(':')[1].strip())
+                    return {
+                        'name': 'NSE',
+                        'start': start_ms,
+                        'end': end_ms
+                    }
+    except Exception as e:
+        logging.error(f"Error parsing exchange timings: {e}")
+    return None
+
+def is_market_open():
+    """
+    Check if the market is open based on regular hours and holiday special timings.
+    Returns: bool
+    """
+    # Get current time in IST
+    now = datetime.now(pytz.timezone('Asia/Kolkata'))
+    current_date = now.strftime('%Y-%m-%d')
+    
+    logging.info(f"Checking market status for date: {current_date}, time: {now.strftime('%H:%M:%S')}")
+    
+    # Check holiday data
+    holiday_response = market_holiday_date_wise()
+    
+    if holiday_response and holiday_response.get('status') == 'success':
+        holidays = holiday_response.get('data', [])
+        
+        for holiday in holidays:
+            logging.info(f"Checking holiday: {holiday}")
+            
+            if holiday['date'] == current_date:
+                logging.info("Today is a holiday with special timing")
+                
+                # Parse exchange timings
+                exchange_info = parse_exchange_timings(holiday)
+                
+                if exchange_info:
+                    start_time = convert_milliseconds_to_time(exchange_info['start'])
+                    end_time = convert_milliseconds_to_time(exchange_info['end'])
+                    
+                    if start_time and end_time:
+                        is_open = start_time <= now <= end_time
+                        logging.info(f"Special timing check - Start: {start_time}, End: {end_time}, Current: {now}, Is Open: {is_open}")
+                        return is_open
+    
+    # Regular market hours check
+    regular_market_time = now.time()
+    is_regular_open = dt_time(9, 00) <= regular_market_time <= dt_time(15, 30)
+    logging.info(f"Regular market hours check - Is Open: {is_regular_open}")
+    return is_regular_open
+
+def fetch_and_insert_data():
+    """Modified fetch and insert function with detailed logging."""
+    try:
+        market_open = is_market_open()
+        logging.info(f"Market open status: {market_open}")
+        
+        if market_open:
+            logging.info("Market is open. Starting data fetch...")
+            fetcher.start_fetching()
+        else:
+            current_time = datetime.now(pytz.timezone('Asia/Kolkata'))
+            logging.info(f"Market is closed at {current_time}. Waiting for next check.")
+    except Exception as e:
+        logging.error(f"Error in fetch_and_insert_data: {e}")
+
 if __name__ == '__main__':
+    # Set up logging with more detailed format
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler('market_timing.log')
+        ]
+    )
+    
     # Database setup
     db_config = configDB()
     check_and_create_db(db_config)
 
     fetcher = OptionChainFetcher()
 
-    # Schedule data fetching during market hours every 3 milliseconds
+    # Schedule data fetching during market hours every second
     schedule.every(1).seconds.do(fetch_and_insert_data)
 
+    logging.info("Starting market data fetching service...")
+    
     while True:
-        schedule.run_pending()
-        t.sleep(0)
+        try:
+            schedule.run_pending()
+            t.sleep(1)  # Changed from 0 to 1 second to reduce CPU usage
+        except Exception as e:
+            logging.error(f"Error in main loop: {e}")
