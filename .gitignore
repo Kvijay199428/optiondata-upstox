@@ -1,0 +1,6 @@
+historic_optionChain\api\token
+historic_optionChain\api\logs
+historic_optionChain\api\instrument
+
+/node_modules/
+/venv/
