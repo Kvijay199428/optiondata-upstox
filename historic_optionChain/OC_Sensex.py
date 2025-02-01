@@ -87,37 +87,52 @@ class MarketCalendar:
             logging.error(f"Error parsing exchange timings: {e}")
         return None
     
-    def is_market_open(self):
-        """Comprehensive check for market open status"""
+    def is_market_open():
+        """
+        Check if the market is open based on regular hours and holiday special timings.
+        Market is now considered open Monday through Saturday during regular hours.
+        Returns: bool
+        """
+        # Get current time in IST
         now = datetime.now(pytz.timezone('Asia/Kolkata'))
         current_date = now.strftime('%Y-%m-%d')
-        current_time = now.time()
         
-        # Check if it's a holiday or weekend
-        if (current_date in self.holidays or 
-            now.weekday() >= 5):  # 5 and 6 are Saturday and Sunday
-            logging.info(f"Market closed: Holiday or weekend {current_date}")
+        logging.info(f"Checking market status for date: {current_date}, time: {now.strftime('%H:%M:%S')}")
+        
+        # First check if it's Sunday (6 is Sunday in Python's weekday())
+        if now.weekday() == 6:
+            logging.info("Market is closed (Sunday)")
             return False
         
-        # Check for special timing dates
-        if current_date in self.special_timings:
-            timing_info = self.special_timings[current_date]
-            start_time = self.convert_milliseconds_to_time(timing_info['start'])
-            end_time = self.convert_milliseconds_to_time(timing_info['end'])
+        # Check holiday data
+        holiday_response = market_holiday_date_wise()
+        
+        if holiday_response and holiday_response.get('status') == 'success':
+            holidays = holiday_response.get('data', [])
             
-            market_open = start_time.time() <= current_time <= end_time.time()
-            logging.info(f"Special timing check - Open: {market_open}")
-            return market_open
+            for holiday in holidays:
+                logging.info(f"Checking holiday: {holiday}")
+                
+                if holiday['date'] == current_date:
+                    logging.info("Today is a holiday with special timing")
+                    
+                    # Parse exchange timings
+                    exchange_info = parse_exchange_timings(holiday)
+                    
+                    if exchange_info:
+                        start_time = convert_milliseconds_to_time(exchange_info['start'])
+                        end_time = convert_milliseconds_to_time(exchange_info['end'])
+                        
+                        if start_time and end_time:
+                            is_open = start_time <= now <= end_time
+                            logging.info(f"Special timing check - Start: {start_time}, End: {end_time}, Current: {now}, Is Open: {is_open}")
+                            return is_open
         
-        # Regular market hours (9:15 AM to 3:30 PM)
-        regular_market_open = (
-            dt_time(9, 14) <= current_time <= dt_time(15, 30)
-        )
-        
-        if regular_market_open:
-            logging.info(f"Market open during regular hours at {current_time}")
-        
-        return regular_market_open
+        # Regular market hours check (now includes Saturday)
+        regular_market_time = now.time()
+        is_regular_open = dt_time(9, 14) <= regular_market_time <= dt_time(15, 30)
+        logging.info(f"Regular market hours check - Is Open: {is_regular_open}")
+        return is_regular_open
     
     @staticmethod
     def convert_milliseconds_to_time(milliseconds):

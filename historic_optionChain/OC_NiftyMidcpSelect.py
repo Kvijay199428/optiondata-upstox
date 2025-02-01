@@ -149,6 +149,26 @@ def get_last_monday_of_month(year, month, today=None):
     
     return last_monday_date
 
+def is_expiry_day():
+    """
+    Check if today is an expiry day.
+    Returns: bool
+    """
+    try:
+        now = datetime.now()
+        today = now.date()
+        
+        # Get the last Monday of the current month
+        last_monday = get_last_monday_of_month(now.year, now.month)
+        
+        logging.info(f"Today: {today}, Last Monday of month: {last_monday}")
+        
+        # Check if today is the last Monday
+        return today == last_monday
+    except Exception as e:
+        logging.error(f"Error checking expiry day: {e}")
+        return False
+
 def get_current_timestamp():
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S") + f".{now.microsecond // 1000:03d}"
@@ -340,10 +360,10 @@ def insert_data_into_db(db_config, table_name, data):
 class OptionChainFetcher:
 
     def fetch_data(self):
-    # Get the current file's directory and construct relative path
+        # Get the current file's directory and construct relative path
         current_dir = Path(__file__).parent
         token_path = current_dir / 'api' / 'token' / 'accessToken_oc.txt'
-    
+
         try:
             with open(token_path, 'r') as file:
                 access_token = file.read().strip()
@@ -353,14 +373,19 @@ class OptionChainFetcher:
 
         # Get the current year and month
         now = datetime.now()
-        # expiry_date = get_last_monday(now.year, now.month)
-        # expiry_date = get_next_monday(now.year, now.month)
-        expiry_date = get_last_monday_of_month(now.year, now.month)
+        
+        # If today is expiry day, use today's date, otherwise use last monday of month
+        if is_expiry_day():
+            expiry_date = now.date()
+            logging.info(f"Today is expiry day. Using today's date: {expiry_date}")
+        else:
+            expiry_date = get_last_monday_of_month(now.year, now.month)
+            logging.info(f"Using last monday of month: {expiry_date}")
 
         # Prepare the API request parameters
         params = {
-            'instrument_key': 'NSE_INDEX|NIFTY MID SELECT',
-            'expiry_date': expiry_date  # Use the dynamically generated expiry date
+            'instrument_key': 'BSE_INDEX|BANKEX',
+            'expiry_date': expiry_date
         }
         headers = {
             'Accept': 'application/json',
@@ -372,7 +397,7 @@ class OptionChainFetcher:
 
         try:
             response = requests.get('https://api.upstox.com/v2/option/chain', params=params, headers=headers)
-            response.raise_for_status()  # Raise an exception for HTTP errors
+            response.raise_for_status()
             logging.debug(f"Request URL: {response.url}")
             return response.json()
         except requests.RequestException as e:
@@ -415,18 +440,21 @@ class OptionChainFetcher:
         else:
             logging.error(f"API error or unexpected response format: {data}")
 
-# Schedule job
-def is_market_open():
-    now = datetime.now(pytz.timezone('Asia/Kolkata')).time()
-    return dt_time(9, 14) <= now <= dt_time(15, 30)
-
 def fetch_and_insert_data():
-    if is_market_open():
-        logging.info("Market is open. Fetching data.")
-        fetcher.start_fetching()
-    else:
-        logging.info("Market is closed. Stopping script.")
-        exit()
+    """Modified fetch and insert function with expiry day check."""
+    try:
+        market_open = is_market_open()
+        is_expiry = is_expiry_day()
+        logging.info(f"Market open status: {market_open}, Is expiry day: {is_expiry}")
+        
+        if market_open or is_expiry:
+            logging.info("Market is open or it's expiry day. Starting data fetch...")
+            fetcher.start_fetching()
+        else:
+            current_time = datetime.now(pytz.timezone('Asia/Kolkata'))
+            logging.info(f"Market is closed at {current_time} and it's not expiry day. Waiting for next check.")
+    except Exception as e:
+        logging.error(f"Error in fetch_and_insert_data: {e}")
 
 def convert_milliseconds_to_time(milliseconds):
     """Convert milliseconds timestamp to datetime object in IST."""
@@ -461,45 +489,51 @@ def parse_exchange_timings(holiday_data):
     return None
 
 def is_market_open():
-    """
-    Check if the market is open based on regular hours and holiday special timings.
-    Returns: bool
-    """
-    # Get current time in IST
-    now = datetime.now(pytz.timezone('Asia/Kolkata'))
-    current_date = now.strftime('%Y-%m-%d')
-    
-    logging.info(f"Checking market status for date: {current_date}, time: {now.strftime('%H:%M:%S')}")
-    
-    # Check holiday data
-    holiday_response = market_holiday_date_wise()
-    
-    if holiday_response and holiday_response.get('status') == 'success':
-        holidays = holiday_response.get('data', [])
+        """
+        Check if the market is open based on regular hours and holiday special timings.
+        Market is now considered open Monday through Saturday during regular hours.
+        Returns: bool
+        """
+        # Get current time in IST
+        now = datetime.now(pytz.timezone('Asia/Kolkata'))
+        current_date = now.strftime('%Y-%m-%d')
         
-        for holiday in holidays:
-            logging.info(f"Checking holiday: {holiday}")
+        logging.info(f"Checking market status for date: {current_date}, time: {now.strftime('%H:%M:%S')}")
+        
+        # First check if it's Sunday (6 is Sunday in Python's weekday())
+        if now.weekday() == 6:
+            logging.info("Market is closed (Sunday)")
+            return False
+        
+        # Check holiday data
+        holiday_response = market_holiday_date_wise()
+        
+        if holiday_response and holiday_response.get('status') == 'success':
+            holidays = holiday_response.get('data', [])
             
-            if holiday['date'] == current_date:
-                logging.info("Today is a holiday with special timing")
+            for holiday in holidays:
+                logging.info(f"Checking holiday: {holiday}")
                 
-                # Parse exchange timings
-                exchange_info = parse_exchange_timings(holiday)
-                
-                if exchange_info:
-                    start_time = convert_milliseconds_to_time(exchange_info['start'])
-                    end_time = convert_milliseconds_to_time(exchange_info['end'])
+                if holiday['date'] == current_date:
+                    logging.info("Today is a holiday with special timing")
                     
-                    if start_time and end_time:
-                        is_open = start_time <= now <= end_time
-                        logging.info(f"Special timing check - Start: {start_time}, End: {end_time}, Current: {now}, Is Open: {is_open}")
-                        return is_open
-    
-    # Regular market hours check
-    regular_market_time = now.time()
-    is_regular_open = dt_time(9, 14) <= regular_market_time <= dt_time(15, 30)
-    logging.info(f"Regular market hours check - Is Open: {is_regular_open}")
-    return is_regular_open
+                    # Parse exchange timings
+                    exchange_info = parse_exchange_timings(holiday)
+                    
+                    if exchange_info:
+                        start_time = convert_milliseconds_to_time(exchange_info['start'])
+                        end_time = convert_milliseconds_to_time(exchange_info['end'])
+                        
+                        if start_time and end_time:
+                            is_open = start_time <= now <= end_time
+                            logging.info(f"Special timing check - Start: {start_time}, End: {end_time}, Current: {now}, Is Open: {is_open}")
+                            return is_open
+        
+        # Regular market hours check (now includes Saturday)
+        regular_market_time = now.time()
+        is_regular_open = dt_time(9, 14) <= regular_market_time <= dt_time(15, 30)
+        logging.info(f"Regular market hours check - Is Open: {is_regular_open}")
+        return is_regular_open
 
 def fetch_and_insert_data():
     """Modified fetch and insert function with detailed logging."""

@@ -41,12 +41,12 @@ def is_trading_hours():
 
 def is_weekday():
     """Check if today is a weekday."""
-    return datetime.now().weekday() < 5
+    return datetime.now().weekday() < 6
 
 def get_current_day():
     """Get current day name and check if it's a weekday."""
     current_day = datetime.now().strftime("%A")
-    is_weekday = datetime.now().weekday() < 5
+    is_weekday = datetime.now().weekday() < 6
     return current_day, is_weekday
 
 def setup_logging():
