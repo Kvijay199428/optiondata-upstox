@@ -156,7 +156,7 @@ def get_current_timestamp():
     return now.strftime("%Y-%m-%d %H:%M:%S") + f".{now.microsecond // 1000:03d}"
 
 # Fetch database config
-def configDB(filename="api/ini/optiondata.ini", section="postgresql"):
+def configDB(filename="api/ini/OptionChain.ini", section="postgresql"):
     parser = ConfigParser()
     parser.read(filename)
     db = {}
