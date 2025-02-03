@@ -46,21 +46,21 @@ logger.addHandler(handler)
 
 logger.info("Starting real-time data insertion script.")
 
-# # Function to get the last wednesday of a given month
-# def get_last_wednesday(year, month):
+# # Function to get the last thursday of a given month
+# def get_last_thursday(year, month):
 #     last_day = datetime(year, month, 1) + timedelta(days=31)
 #     last_day -= timedelta(days=last_day.day)
-#     last_wednesday = last_day - timedelta(days=(last_day.weekday() - 2) % 7)
+#     last_thursday = last_day - timedelta(days=(last_day.weekday() - 2) % 7)
 
 #     india_holidays = holidays.India(years=year)
-#     if last_wednesday.weekday() > 4 or last_wednesday in india_holidays:
-#         logging.info(f"{last_wednesday.date()} is a weekend or holiday.")
-#         last_wednesday -= timedelta(days=1)
+#     if last_thursday.weekday() > 4 or last_thursday in india_holidays:
+#         logging.info(f"{last_thursday.date()} is a weekend or holiday.")
+#         last_thursday -= timedelta(days=1)
 
-#     logging.info(f"Last wednesday expiry date is {last_wednesday.date()}.")
-#     return last_wednesday.date()
+#     logging.info(f"Last thursday expiry date is {last_thursday.date()}.")
+#     return last_thursday.date()
 
-# def get_next_wednesday(year, month, today=None):
+# def get_next_thursday(year, month, today=None):
 #     if today is None:
 #         today = datetime.today()
 
@@ -85,39 +85,39 @@ logger.info("Starting real-time data insertion script.")
 #         logging.info("Today is a weekend holiday (Saturday).")
 #     elif today.weekday() == 6:  # Sunday
 #         logging.info("Today is a weekend holiday (Sunday).")
-#     else:  # Weekday (wednesday to Friday)
+#     else:  # Weekday (thursday to Friday)
 #         # Check if today is a holiday
 #         if today.date().strftime('%Y-%m-%d') in [h[0] for h in holidays_list]:
 #             logging.info(f"{today.date()} is a holiday. Adjusting the date.")
 #             today += timedelta(days=1)  # Move to the next day if today is a holiday
 
-#     # Calculate the days until the next Wednesday
-#     days_ahead = (2 - today.weekday() + 7) % 7  # 2 represents Wednesday
-#     if days_ahead == 0:  # If today is Wednesday, move to next week
+#     # Calculate the days until the next thursday
+#     days_ahead = (2 - today.weekday() + 7) % 7  # 2 represents thursday
+#     if days_ahead == 0:  # If today is thursday, move to next week
 #         days_ahead = 7
     
-#     next_wednesday = today + timedelta(days=days_ahead)
+#     next_thursday = today + timedelta(days=days_ahead)
 
 #     india_holidays = holidays.India(years=year)
     
-#     # If the next Wednesday is a holiday or a weekend, get the previous trading day
-#     while next_wednesday.weekday() > 4 or next_wednesday in india_holidays:
-#         logging.info(f"{next_wednesday.date()} is a weekend or holiday. Finding the previous trading day.")
-#         next_wednesday -= timedelta(days=1)
+#     # If the next thursday is a holiday or a weekend, get the previous trading day
+#     while next_thursday.weekday() > 4 or next_thursday in india_holidays:
+#         logging.info(f"{next_thursday.date()} is a weekend or holiday. Finding the previous trading day.")
+#         next_thursday -= timedelta(days=1)
 
-#     next_wednesday_date = next_wednesday.date()  # Extract the final date
-#     logging.info(f"Next Wednesday expiry date is {next_wednesday_date}.")
+#     next_thursday_date = next_thursday.date()  # Extract the final date
+#     logging.info(f"Next thursday expiry date is {next_thursday_date}.")
     
-#     return next_wednesday_date
-def get_last_wednesday_of_month(year, month, today=None):
+#     return next_thursday_date
+def get_last_thursday_of_month(year, month, today=None):
     if today is None:
         today = datetime.today()
 
     # Create a datetime for the last day of the specified month
     last_day = datetime(year, month, calendar.monthrange(year, month)[1])
     
-    # Find the last Wednesday working backwards from the last day of the month
-    while last_day.weekday() != 2:  # 2 represents Wednesday
+    # Find the last thursday working backwards from the last day of the month
+    while last_day.weekday() != 3:  # 3 represents thursday
         last_day -= timedelta(days=1)
     
     # Call the market_holiday_date_wise function and process its response
@@ -138,15 +138,15 @@ def get_last_wednesday_of_month(year, month, today=None):
 
     india_holidays = holidays.India(years=year)
     
-    # If the last Wednesday is a holiday or a weekend, get the previous trading day
+    # If the last thursday is a holiday or a weekend, get the previous trading day
     while last_day.weekday() > 4 or last_day in india_holidays or last_day.date().strftime('%Y-%m-%d') in [h[0] for h in holidays_list]:
         logging.info(f"{last_day.date()} is a weekend or holiday. Finding the previous trading day.")
         last_day -= timedelta(days=1)
 
-    last_wednesday_date = last_day.date()  # Extract the final date
-    logging.info(f"Last Wednesday of the month is {last_wednesday_date}.")
+    last_thursday_date = last_day.date()  # Extract the final date
+    logging.info(f"Last thursday of the month is {last_thursday_date}.")
     
-    return last_wednesday_date
+    return last_thursday_date
 
 def is_expiry_day():
     """
@@ -157,13 +157,13 @@ def is_expiry_day():
         now = datetime.now()
         today = now.date()
         
-        # Get the last wednesday of the current month
-        last_wednesday = get_last_wednesday_of_month(now.year, now.month)
+        # Get the last thursday of the current month
+        last_thursday = get_last_thursday_of_month(now.year, now.month)
         
-        logging.info(f"Today: {today}, Last wednesday of month: {last_wednesday}")
+        logging.info(f"Today: {today}, Last thursday of month: {last_thursday}")
         
-        # Check if today is the last wednesday
-        return today == last_wednesday
+        # Check if today is the last thursday
+        return today == last_thursday
     except Exception as e:
         logging.error(f"Error checking expiry day: {e}")
         return False
@@ -373,13 +373,13 @@ class OptionChainFetcher:
         # Get the current year and month
         now = datetime.now()
         
-        # If today is expiry day, use today's date, otherwise use last wednesday of month
+        # If today is expiry day, use today's date, otherwise use last thursday of month
         if is_expiry_day():
             expiry_date = now.date()
             logging.info(f"Today is expiry day. Using today's date: {expiry_date}")
         else:
-            expiry_date = get_last_wednesday_of_month(now.year, now.month)
-            logging.info(f"Using last wednesday of month: {expiry_date}")
+            expiry_date = get_last_thursday_of_month(now.year, now.month)
+            logging.info(f"Using last thursday of month: {expiry_date}")
 
         # Prepare the API request parameters
         params = {

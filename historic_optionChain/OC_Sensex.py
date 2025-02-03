@@ -111,7 +111,7 @@ class MarketCalendar:
         
         # Regular market hours (9:15 AM to 3:30 PM)
         regular_market_open = (
-            dt_time(9, 14) <= current_time <= dt_time(15, 30)
+            dt_time(1, 25) <= current_time <= dt_time(15, 30)
         )
         
         if regular_market_open:
@@ -409,7 +409,7 @@ class DataFetcher(threading.Thread):
                 
                 # Get access token
                 current_dir = Path(__file__).parent
-                token_path = current_dir / 'api' / 'token' / 'accessToken_latency.txt'
+                token_path = current_dir / 'api' / 'token' / 'accessToken_oc.txt'
                 
                 try:
                     with open(token_path, 'r') as file:
@@ -492,10 +492,10 @@ def get_market_open_countdown():
     today = now.date()
     
     # Market open time (9:15 AM)
-    market_open_time = datetime.combine(today, dt_time(9, 14)).replace(tzinfo=pytz.timezone('Asia/Kolkata'))
+    market_open_time = datetime.combine(today, dt_time(1, 25)).replace(tzinfo=pytz.timezone('Asia/Kolkata'))
     
     # If current time is past market open, calculate for next day
-    if now.time() > dt_time(9, 14):
+    if now.time() > dt_time(1, 25):
         market_open_time += timedelta(days=1)
         while market_open_time.weekday() >= 6:  # Skip only Sunday
             market_open_time += timedelta(days=1)
