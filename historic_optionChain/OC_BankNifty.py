@@ -1,3 +1,5 @@
+# OC_Sensex.py
+
 import sys
 import requests
 import psycopg2
@@ -12,182 +14,293 @@ import schedule
 import pytz
 import holidays
 from holiday.market_holiday_date_wise import market_holiday_date_wise
-import calendar
+import threading
+from queue import Queue
+from rich.console import Console
+from rich.live import Live
+from rich.table import Table
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
+from rich import print as rprint
 from pathlib import Path
-# Call the function
-market_holiday_date_wise()
 
-# Function to ensure paths are correctly located in executable
+# At the top of the file
+BASE_DIR = Path(__file__).parent
+ACCESS_TOKEN_FILE_PATH = BASE_DIR / "api" / "token" / "accessToken_oc.txt"
+CONFIG_FILE_PATH = BASE_DIR / "api" / "ini" / "OptionChain.ini"
+LOG_DIRECTORY = BASE_DIR / "api" / "logs"
+LOG_FILE = LOG_DIRECTORY / "Banknifty.log"
+
+# Ensure the directory exists
+def ensure_directory_exists(directory):
+    """Create directory if it doesn't exist."""
+    try:
+        os.makedirs(directory, exist_ok=True)
+        logging.debug(f"Ensuring directory exists: {directory}")
+    except Exception as e:
+        logging.error(f"Error creating directory {directory}: {e}")
+        raise
+
+# Enhanced Logging Configuration
+def setup_logging():
+    """Set up comprehensive logging with detailed configuration."""
+    try:
+        # Ensure log directory exists
+        ensure_directory_exists(LOG_DIRECTORY)
+
+        # Configure logging with more detailed rotating file handler
+        handler = RotatingFileHandler(
+            LOG_FILE, 
+            maxBytes=10*1024*1024,  # 10 MB 
+            backupCount=10  # Keep more backup logs
+        )
+        
+        # More detailed formatter
+        formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(funcName)s() - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        handler.setFormatter(formatter)
+
+        # Console handler for immediate visibility
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        console_handler.setLevel(logging.INFO)
+
+        # Root logger configuration
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        logger.addHandler(console_handler)
+
+        logging.info("Logging system initialized successfully.")
+    except Exception as e:
+        print(f"Critical error setting up logging: {e}")
+        sys.exit(1)
+
+# Call logging setup at the start
+setup_logging()
+
+class MarketCalendar:
+    def __init__(self):
+        self.holidays = []
+        self.special_timings = {}
+        self.fetch_holiday_data()
+        
+    def fetch_holiday_data(self):
+        """Fetch holiday data once during initialization"""
+        try:
+            holiday_response = market_holiday_date_wise()
+            if holiday_response and holiday_response.get('status') == 'success':
+                for holiday in holiday_response.get('data', []):
+                    date = holiday['date']
+                    self.holidays.append(date)
+                    
+                    # Store special timing information if available
+                    exchange_info = self.parse_exchange_timings(holiday)
+                    if exchange_info:
+                        self.special_timings[date] = exchange_info
+                        
+                logging.info(f"Successfully loaded {len(self.holidays)} holidays and {len(self.special_timings)} special timing dates")
+            else:
+                logging.warning("Failed to fetch holiday data, assuming regular trading hours")
+        except Exception as e:
+            logging.error(f"Error fetching holiday data: {e}")
+
+    def parse_exchange_timings(self, holiday_data):
+        """Parse exchange timings from holiday data"""
+        try:
+            for exchange_info in holiday_data.get('open_exchanges', []):
+                if isinstance(exchange_info, str):
+                    parts = exchange_info.split('(')
+                    exchange_name = parts[0].strip()
+                    if exchange_name == 'NSE':
+                        timing_parts = parts[1].strip(')').split(',')
+                        start_ms = int(timing_parts[0].split(':')[1].strip())
+                        end_ms = int(timing_parts[1].split(':')[1].strip())
+                        return {
+                            'start': start_ms,
+                            'end': end_ms
+                        }
+        except Exception as e:
+            logging.error(f"Error parsing exchange timings: {e}")
+        return None
+    
+    def is_market_open(self):
+        """Comprehensive check for market open status"""
+        now = datetime.now(pytz.timezone('Asia/Kolkata'))
+        current_date = now.strftime('%Y-%m-%d')
+        current_time = now.time()
+        
+        # Check if it's a holiday or Sunday (only Sunday is weekend now)
+        if (current_date in self.holidays or 
+            now.weekday() >= 6):  # Only Sunday (6) is considered weekend
+            logging.info(f"Market closed: Holiday or Sunday {current_date}")
+            return False
+        
+        # Check for special timing dates
+        if current_date in self.special_timings:
+            timing_info = self.special_timings[current_date]
+            start_time = self.convert_milliseconds_to_time(timing_info['start'])
+            end_time = self.convert_milliseconds_to_time(timing_info['end'])
+            
+            market_open = start_time.time() <= current_time <= end_time.time()
+            logging.info(f"Special timing check - Open: {market_open}")
+            return market_open
+        
+        # Regular market hours (9:15 AM to 3:30 PM)
+        regular_market_open = (
+            dt_time(9, 15) <= current_time <= dt_time(15, 30)
+        )
+        
+        if regular_market_open:
+            logging.info(f"Market open during regular hours at {current_time}")
+        
+        return regular_market_open
+    
+    @staticmethod
+    def convert_milliseconds_to_time(milliseconds):
+        """Convert milliseconds timestamp to datetime object in IST"""
+        try:
+            seconds = milliseconds / 1000
+            return datetime.fromtimestamp(seconds, pytz.timezone('Asia/Kolkata'))
+        except Exception as e:
+            logging.error(f"Error converting milliseconds {milliseconds}: {e}")
+            return None
+
+class ExpiryManager:
+    def __init__(self):
+        self.expiry_dates = []
+        self.threads = {}
+        self.progress_data = {}
+        self.lock = threading.Lock()
+        
+    # def get_next_n_expiries(self, n=5):
+    #     """Get the next n valid thursday expiry dates starting from current date."""
+    #     current_date = datetime.now()
+    #     expiries = []
+    #     month = current_date.month
+    #     year = current_date.year
+        
+    #     while len(expiries) < n:
+    #         # Get all thursday expiries for current month
+    #         month_expiries = self.get_month_thursday_expiries(year, month)
+            
+    #         # Filter out past dates if we're looking at current month
+    #         if month == current_date.month and year == current_date.year:
+    #             month_expiries = [date for date in month_expiries if date >= current_date.date()]
+            
+    #         # Add expiries until we reach n or run out of dates
+    #         for expiry in month_expiries:
+    #             if len(expiries) < n:
+    #                 expiries.append(expiry)
+    #             else:
+    #                 break
+            
+    #         # Move to next month if we still need more dates
+    #         if len(expiries) < n:
+    #             if month == 12:
+    #                 month = 1
+    #                 year += 1
+    #             else:
+    #                 month += 1
+                    
+    #     return expiries
+    def get_next_n_expiries(self, n=3):
+        """Get the next n monthly last thursday expiry dates starting from current date."""
+        current_date = datetime.now()
+        expiries = []
+        month = current_date.month
+        year = current_date.year
+        
+        while len(expiries) < n:
+            # Find the last thursday of the current month
+            month_last_day = (datetime(year, month, 1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            
+            # Go backwards to find the last thursday
+            last_thursday = month_last_day
+            while last_thursday.weekday() != 3:  # 1 represents thursday
+                last_thursday -= timedelta(days=1)
+            
+            # Check if this thursday is in the future or is today
+            if last_thursday.date() >= current_date.date():
+                # Verify it's a valid trading day
+                if self.is_valid_trading_day(last_thursday.date()):
+                    expiries.append(last_thursday.date())
+            
+            # Move to next month
+            if month == 12:
+                month = 1
+                year += 1
+            else:
+                month += 1
+        
+        return expiries
+    
+    def get_month_thursday_expiries(self, year, month):
+        """Get all thursday expiry dates for a given month."""
+        first_day = datetime(year, month, 1)
+        last_day = (first_day + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        
+        thursdays = []
+        current_day = first_day
+        
+        while current_day <= last_day:
+            if current_day.weekday() == 1:  # thursday
+                thursday_date = current_day.date()
+                # Check if it's not a holiday
+                if self.is_valid_trading_day(thursday_date):
+                    thursdays.append(thursday_date)
+            current_day += timedelta(days=1)
+            
+        return thursdays
+    
+    def is_valid_trading_day(self, date):
+        """Check if the given date is a valid trading day."""
+        holiday_response = market_holiday_date_wise()
+        if holiday_response and holiday_response.get('status') == 'success':
+            holidays_list = [holiday['date'] for holiday in holiday_response.get('data', [])]
+            return date.strftime('%Y-%m-%d') not in holidays_list
+        return True
+
 def resource_path(relative_path):
     """Get the absolute path to the resource, works for dev and for PyInstaller."""
     try:
-        # PyInstaller creates a temp folder and stores the path in _MEIPASS
         base_path = sys._MEIPASS
     except AttributeError:
         base_path = os.path.abspath(".")
-    
     return os.path.join(base_path, relative_path)
-
-# Ensure the directory exists
-log_directory = "api/logs"
-if not os.path.exists(log_directory):
-    os.makedirs(log_directory)
-
-# Configure logging with rotating file handler
-log_file = "api/logs/BankNifty.log"
-handler = RotatingFileHandler(log_file, maxBytes=5000000, backupCount=5)  # 5 MB max per log file, keep 5 backups
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-
-# Root logger
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
-
-logger.info("Starting real-time data insertion script.")
-
-# # Function to get the last thursday of a given month
-# def get_last_thursday(year, month):
-#     last_day = datetime(year, month, 1) + timedelta(days=31)
-#     last_day -= timedelta(days=last_day.day)
-#     last_thursday = last_day - timedelta(days=(last_day.weekday() - 2) % 7)
-
-#     india_holidays = holidays.India(years=year)
-#     if last_thursday.weekday() > 4 or last_thursday in india_holidays:
-#         logging.info(f"{last_thursday.date()} is a weekend or holiday.")
-#         last_thursday -= timedelta(days=1)
-
-#     logging.info(f"Last thursday expiry date is {last_thursday.date()}.")
-#     return last_thursday.date()
-
-# def get_next_thursday(year, month, today=None):
-#     if today is None:
-#         today = datetime.today()
-
-#     # Call the market_holiday_date_wise function and process its response
-#     holiday_response = market_holiday_date_wise()
-
-#     holidays_list = []
-    
-#     # Ensure holiday_response is not None before accessing its contents
-#     if holiday_response is None:
-#         logging.error("Error: Holiday response is None. Skipping holiday check.")
-#     elif holiday_response.get('status') == 'success' and holiday_response.get('data'):
-#         # If there are holidays, extract them
-#         holidays_list = [(holiday['date'], holiday['description']) for holiday in holiday_response['data']]
-#         for holiday in holidays_list:
-#             logging.info(f"Holiday on {holiday[0]}: {holiday[1]}")
-#     else:
-#         logging.warning("Holiday response status is not 'success' or no data returned.")
-
-#     # Check if today is a weekend
-#     if today.weekday() == 5:  # Saturday
-#         logging.info("Today is a weekend holiday (Saturday).")
-#     elif today.weekday() == 6:  # Sunday
-#         logging.info("Today is a weekend holiday (Sunday).")
-#     else:  # Weekday (thursday to Friday)
-#         # Check if today is a holiday
-#         if today.date().strftime('%Y-%m-%d') in [h[0] for h in holidays_list]:
-#             logging.info(f"{today.date()} is a holiday. Adjusting the date.")
-#             today += timedelta(days=1)  # Move to the next day if today is a holiday
-
-#     # Calculate the days until the next thursday
-#     days_ahead = (2 - today.weekday() + 7) % 7  # 2 represents thursday
-#     if days_ahead == 0:  # If today is thursday, move to next week
-#         days_ahead = 7
-    
-#     next_thursday = today + timedelta(days=days_ahead)
-
-#     india_holidays = holidays.India(years=year)
-    
-#     # If the next thursday is a holiday or a weekend, get the previous trading day
-#     while next_thursday.weekday() > 4 or next_thursday in india_holidays:
-#         logging.info(f"{next_thursday.date()} is a weekend or holiday. Finding the previous trading day.")
-#         next_thursday -= timedelta(days=1)
-
-#     next_thursday_date = next_thursday.date()  # Extract the final date
-#     logging.info(f"Next thursday expiry date is {next_thursday_date}.")
-    
-#     return next_thursday_date
-def get_last_thursday_of_month(year, month, today=None):
-    if today is None:
-        today = datetime.today()
-
-    # Create a datetime for the last day of the specified month
-    last_day = datetime(year, month, calendar.monthrange(year, month)[1])
-    
-    # Find the last thursday working backwards from the last day of the month
-    while last_day.weekday() != 3:  # 3 represents thursday
-        last_day -= timedelta(days=1)
-    
-    # Call the market_holiday_date_wise function and process its response
-    holiday_response = market_holiday_date_wise()
-
-    holidays_list = []
-    
-    # Ensure holiday_response is not None before accessing its contents
-    if holiday_response is None:
-        logging.error("Error: Holiday response is None. Skipping holiday check.")
-    elif holiday_response.get('status') == 'success' and holiday_response.get('data'):
-        # If there are holidays, extract them
-        holidays_list = [(holiday['date'], holiday['description']) for holiday in holiday_response['data']]
-        for holiday in holidays_list:
-            logging.info(f"Holiday on {holiday[0]}: {holiday[1]}")
-    else:
-        logging.warning("Holiday response status is not 'success' or no data returned.")
-
-    india_holidays = holidays.India(years=year)
-    
-    # If the last thursday is a holiday or a weekend, get the previous trading day
-    while last_day.weekday() > 4 or last_day in india_holidays or last_day.date().strftime('%Y-%m-%d') in [h[0] for h in holidays_list]:
-        logging.info(f"{last_day.date()} is a weekend or holiday. Finding the previous trading day.")
-        last_day -= timedelta(days=1)
-
-    last_thursday_date = last_day.date()  # Extract the final date
-    logging.info(f"Last thursday of the month is {last_thursday_date}.")
-    
-    return last_thursday_date
-
-def is_expiry_day():
-    """
-    Check if today is an expiry day.
-    Returns: bool
-    """
-    try:
-        now = datetime.now()
-        today = now.date()
-        
-        # Get the last thursday of the current month
-        last_thursday = get_last_thursday_of_month(now.year, now.month)
-        
-        logging.info(f"Today: {today}, Last thursday of month: {last_thursday}")
-        
-        # Check if today is the last thursday
-        return today == last_thursday
-    except Exception as e:
-        logging.error(f"Error checking expiry day: {e}")
-        return False
 
 def get_current_timestamp():
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S") + f".{now.microsecond // 1000:03d}"
 
-# Fetch database config
-def configDB(filename="api/ini/OptionChain.ini", section="postgresql"):
-    parser = ConfigParser()
-    parser.read(filename)
-    db = {}
-    if parser.has_section(section):
-        params = parser.items(section)
-        for param in params:
-            db[param[0]] = param[1]
-    else:
-        logging.error(f"Section {section} not found in {filename} file.")
-        raise Exception(f'Section {section} not found in {filename} file.')
-    return db
+def configDB(filename=CONFIG_FILE_PATH, section="postgresql"):
+    """Enhanced database configuration with more robust error handling."""
+    try:
+        logging.debug(f"Attempting to read database configuration from {filename}")
+        parser = ConfigParser()
+        
+        # Ensure file exists and is readable
+        if not os.path.exists(filename):
+            logging.error(f"Configuration file not found: {filename}")
+            raise FileNotFoundError(f"Configuration file not found: {filename}")
+        
+        parser.read(filename)
+        
+        if not parser.has_section(section):
+            logging.error(f"Section {section} not found in {filename}")
+            raise ValueError(f'Section {section} not found in {filename} file.')
+        
+        db = dict(parser.items(section))
+        logging.info(f"Successfully loaded database configuration for section: {section}")
+        return db
+    
+    except Exception as e:
+        logging.error(f"Error reading database configuration: {e}")
+        raise
 
-# Check and create database if not exists
 def check_and_create_db(db_config):
+    """Check and create database if not exists."""
     logging.debug("Checking if the database exists.")
     conn = None
     try:
@@ -198,7 +311,6 @@ def check_and_create_db(db_config):
             port=db_config.get('port', 5432),
             database='postgres'
         )
-        logging.info("Database connected successfully.")
         conn.autocommit = True
         cur = conn.cursor()
         cur.execute(sql.SQL("SELECT 1 FROM pg_database WHERE datname = %s"), [db_config['database']])
@@ -215,22 +327,22 @@ def check_and_create_db(db_config):
         if conn is not None:
             conn.close()
 
-# Helper function to sanitize table names
 def sanitize_table_name(expiry_date, instrument_key):
-    logging.debug(f"Expiry Date is {expiry_date}.")
+    """Sanitize table name for PostgreSQL."""
+    logging.debug(f"Sanitizing table name for expiry {expiry_date} and instrument {instrument_key}")
     sanitized_instrument_key = instrument_key.replace(' ', '_').replace('|', '_').lower()
-    sanitized_expiry_date = expiry_date.replace('-', '_')
+    sanitized_expiry_date = str(expiry_date).replace('-', '_')
     return f"{sanitized_instrument_key}_{sanitized_expiry_date}"
 
-# Database insertion function
 def insert_data_into_db(db_config, table_name, data):
+    """Insert option chain data into PostgreSQL database."""
     logging.debug(f"Inserting data into table {table_name}.")
     conn = None
     try:
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor()
 
-        # Create the table if it doesn't exist
+        # Create table if not exists
         create_table_query = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             timestamp TIMESTAMP PRIMARY KEY,
@@ -268,18 +380,19 @@ def insert_data_into_db(db_config, table_name, data):
         );
         """
         cur.execute(create_table_query)
-        logging.info("Table created or verified successfully.")
 
-        # Insert data
+        # Prepare insert query
         insert_query = f"""
-        INSERT INTO {table_name} (timestamp, expiry, strike_price, underlying_spot_price, call_ltp, call_close_price, call_volume, call_oi,
-                                  call_bid_price, call_bid_qty, call_ask_price, call_ask_qty, call_vega, call_theta, call_gamma, call_delta, call_iv, 
-                                  put_ltp, put_close_price, put_volume, put_oi, put_bid_price, put_bid_qty, put_ask_price, put_ask_qty, 
-                                  put_vega, put_theta, put_gamma, put_delta, put_iv, pcr, underlying_key)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        INSERT INTO {table_name} (timestamp, expiry, strike_price, underlying_spot_price, call_ltp, 
+            call_close_price, call_volume, call_oi, call_bid_price, call_bid_qty, call_ask_price, 
+            call_ask_qty, call_vega, call_theta, call_gamma, call_delta, call_iv, put_ltp, 
+            put_close_price, put_volume, put_oi, put_bid_price, put_bid_qty, put_ask_price, 
+            put_ask_qty, put_vega, put_theta, put_gamma, put_delta, put_iv, pcr, underlying_key)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         
-        # Extract values
+        # Prepare values for insertion
         values = (
             get_current_timestamp(),
             data.get('expiry'),
@@ -315,38 +428,30 @@ def insert_data_into_db(db_config, table_name, data):
             data.get('underlying_key')
         )
 
-        # Create indexes
+        # Create indexes to improve query performance
         cur.execute(sql.SQL("""
-            CREATE INDEX IF NOT EXISTS {} 
-            ON {} (underlying_key)
+            CREATE INDEX IF NOT EXISTS {} ON {} (underlying_key)
         """).format(
             sql.Identifier(f"idx_{table_name}_underlying_key"),
             sql.Identifier(table_name)
         ))
         cur.execute(sql.SQL("""
-            CREATE INDEX IF NOT EXISTS {} 
-            ON {} (strike_price)
+            CREATE INDEX IF NOT EXISTS {} ON {} (strike_price)
         """).format(
             sql.Identifier(f"idx_{table_name}_strike_price"),
             sql.Identifier(table_name)
         ))
         cur.execute(sql.SQL("""
-            CREATE INDEX IF NOT EXISTS {} 
-            ON {} (expiry)
+            CREATE INDEX IF NOT EXISTS {} ON {} (expiry)
         """).format(
             sql.Identifier(f"idx_{table_name}_expiry"),
             sql.Identifier(table_name)
         ))
 
-        # Log SQL query and values
-        logging.debug(f"SQL Query: {insert_query}")
-        logging.debug(f"Values: {values}")
-
-        # Execute insertion
+        # Execute insert query
         cur.execute(insert_query, values)
-
         conn.commit()
-        logging.info("Data inserted successfully.")
+        logging.info(f"Data inserted successfully into {table_name}")
         cur.close()
 
     except Exception as error:
@@ -355,225 +460,262 @@ def insert_data_into_db(db_config, table_name, data):
         if conn is not None:
             conn.close()
 
-# Fetch and process data from API
-class OptionChainFetcher:
+def validate_access_token(token):
+    """Validate that the access token is not empty and has the expected format"""
+    if not token:
+        raise ValueError("Access token is empty")
+    if not token.strip():
+        raise ValueError("Access token contains only whitespace")
+    # Add any other validation specific to your Upstox API token format
+    return token.strip()
 
-    def fetch_data(self):
-        # Get the current file's directory and construct relative path
-        current_dir = Path(__file__).parent
-        token_path = current_dir / 'api' / 'token' / 'accessToken_oc.txt'
-
+class DataFetcher(threading.Thread):
+    def __init__(self, expiry_date, progress_data, lock, db_config, market_calendar):
+        super().__init__()
+        self.expiry_date = expiry_date
+        self.progress_data = progress_data
+        self.lock = lock
+        self.db_config = db_config
+        self.market_calendar = market_calendar
+        self.daemon = True
+        
+        # Retrieving access token with enhanced error handling
         try:
-            with open(token_path, 'r') as file:
-                access_token = file.read().strip()
-        except FileNotFoundError:
-            logging.error("Access token file not found.")
-            return {}
-
-        # Get the current year and month
-        now = datetime.now()
-        
-        # If today is expiry day, use today's date, otherwise use last thursday of month
-        if is_expiry_day():
-            expiry_date = now.date()
-            logging.info(f"Today is expiry day. Using today's date: {expiry_date}")
-        else:
-            expiry_date = get_last_thursday_of_month(now.year, now.month)
-            logging.info(f"Using last thursday of month: {expiry_date}")
-
-        # Prepare the API request parameters
-        params = {
-            'instrument_key': 'BSE_INDEX|BANKEX',
-            'expiry_date': expiry_date
-        }
-        headers = {
-            'Accept': 'application/json',
-            'Authorization': f'Bearer {access_token}'
-        }
-
-        # Sanitize and generate the table name
-        table_name = sanitize_table_name(str(expiry_date), params['instrument_key'])
-
-        try:
-            response = requests.get('https://api.upstox.com/v2/option/chain', params=params, headers=headers)
-            response.raise_for_status()
-            logging.debug(f"Request URL: {response.url}")
-            return response.json()
-        except requests.RequestException as e:
-            logging.error(f"Request failed: {e}")
-            return {}
-
-    def start_fetching(self):
-        logging.info("Starting data fetching...")
-        data = self.fetch_data()
-
-        # Check for successful status and presence of 'data' key
-        if data.get('status') == 'success' and 'data' in data:
-            logging.debug(f"Data fetched successfully: {data}")
-
-            # Loop through the items in the 'data' key directly
-            for item in data['data']:
-                expiry = item.get('expiry')
-                underlying_spot_price = item.get('underlying_spot_price')
-                pcr = item.get('pcr')
-                underlying_key = item.get('underlying_key')
-                strike_price = item.get('strike_price')
-                call_options = item.get('call_options')
-                put_options = item.get('put_options')
-
-                # Generate a valid table name using the expiry date and instrument key
-                table_name = sanitize_table_name(expiry, underlying_key)
-
-                record = {
-                    'expiry': expiry,
-                    'strike_price': strike_price,
-                    'underlying_spot_price': underlying_spot_price,
-                    'pcr': pcr,
-                    'underlying_key': underlying_key,
-                    'call_options': call_options,
-                    'put_options': put_options
-                }
-                # Insert the data into the dynamically generated table
-                insert_data_into_db(db_config, table_name, record)
-
-        else:
-            logging.error(f"API error or unexpected response format: {data}")
-
-def fetch_and_insert_data():
-    """Modified fetch and insert function with expiry day check."""
-    try:
-        market_open = is_market_open()
-        is_expiry = is_expiry_day()
-        logging.info(f"Market open status: {market_open}, Is expiry day: {is_expiry}")
-        
-        if market_open or is_expiry:
-            logging.info("Market is open or it's expiry day. Starting data fetch...")
-            fetcher.start_fetching()
-        else:
-            current_time = datetime.now(pytz.timezone('Asia/Kolkata'))
-            logging.info(f"Market is closed at {current_time} and it's not expiry day. Waiting for next check.")
-    except Exception as e:
-        logging.error(f"Error in fetch_and_insert_data: {e}")
-
-def convert_milliseconds_to_time(milliseconds):
-    """Convert milliseconds timestamp to datetime object in IST."""
-    try:
-        seconds = milliseconds / 1000
-        dt = datetime.fromtimestamp(seconds, pytz.timezone('Asia/Kolkata'))
-        logging.info(f"Converted milliseconds {milliseconds} to datetime: {dt}")
-        return dt
-    except Exception as e:
-        logging.error(f"Error converting milliseconds {milliseconds}: {e}")
-        return None
-
-def parse_exchange_timings(holiday_data):
-    """Parse exchange timings from holiday data."""
-    try:
-        for exchange_info in holiday_data.get('open_exchanges', []):
-            if isinstance(exchange_info, str):
-                # Parse the string format "NSE (Start: 1735703100000, End: 1735725600000)"
-                parts = exchange_info.split('(')
-                exchange_name = parts[0].strip()
-                if exchange_name == 'NSE':
-                    timing_parts = parts[1].strip(')').split(',')
-                    start_ms = int(timing_parts[0].split(':')[1].strip())
-                    end_ms = int(timing_parts[1].split(':')[1].strip())
-                    return {
-                        'name': 'NSE',
-                        'start': start_ms,
-                        'end': end_ms
-                    }
-    except Exception as e:
-        logging.error(f"Error parsing exchange timings: {e}")
-    return None
-
-def is_market_open():
-    """
-    Check if the market is open based on regular hours and holiday special timings.
-    Market is now considered open Monday through Saturday during regular hours.
-    Returns: bool
-    """
-    # Get current time in IST
-    now = datetime.now(pytz.timezone('Asia/Kolkata'))
-    current_date = now.strftime('%Y-%m-%d')
-    
-    logging.info(f"Checking market status for date: {current_date}, time: {now.strftime('%H:%M:%S')}")
-    
-    # First check if it's Sunday (6 is Sunday in Python's weekday())
-    if now.weekday() == 6:
-        logging.info("Market is closed (Sunday)")
-        return False
-    
-    # Check holiday data
-    holiday_response = market_holiday_date_wise()
-    
-    if holiday_response and holiday_response.get('status') == 'success':
-        holidays = holiday_response.get('data', [])
-        
-        for holiday in holidays:
-            logging.info(f"Checking holiday: {holiday}")
+            token_path = Path(ACCESS_TOKEN_FILE_PATH)
+            if not token_path.exists():
+                raise FileNotFoundError(
+                    f"\nAccess token file not found at: {token_path}\n"
+                    f"Please ensure you have:\n"
+                    f"1. Created the directory: {token_path.parent}\n"
+                    f"2. Created the file: {token_path.name}\n"
+                    f"3. Added your Upstox API access token to the file"
+                )
             
-            if holiday['date'] == current_date:
-                logging.info("Today is a holiday with special timing")
+            with open(token_path, 'r') as file:
+                self.access_token = validate_access_token(file.read())
                 
-                # Parse exchange timings
-                exchange_info = parse_exchange_timings(holiday)
-                
-                if exchange_info:
-                    start_time = convert_milliseconds_to_time(exchange_info['start'])
-                    end_time = convert_milliseconds_to_time(exchange_info['end'])
-                    
-                    if start_time and end_time:
-                        is_open = start_time <= now <= end_time
-                        logging.info(f"Special timing check - Start: {start_time}, End: {end_time}, Current: {now}, Is Open: {is_open}")
-                        return is_open
-    
-    # Regular market hours check (now includes Saturday)
-    regular_market_time = now.time()
-    is_regular_open = dt_time(9, 14) <= regular_market_time <= dt_time(15, 30)
-    logging.info(f"Regular market hours check - Is Open: {is_regular_open}")
-    return is_regular_open
-
-def fetch_and_insert_data():
-    """Modified fetch and insert function with detailed logging."""
-    try:
-        market_open = is_market_open()
-        logging.info(f"Market open status: {market_open}")
+            if not self.access_token:
+                logging.warning("Access token is empty")
         
-        if market_open:
-            logging.info("Market is open. Starting data fetch...")
-            fetcher.start_fetching()
-        else:
-            current_time = datetime.now(pytz.timezone('Asia/Kolkata'))
-            logging.info(f"Market is closed at {current_time}. Waiting for next check.")
+        except Exception as e:
+            logging.error(f"Error reading access token: {e}")
+            raise
+        
+    def run(self):
+        while self.market_calendar.is_market_open():
+            try:
+                with self.lock:
+                    self.progress_data[self.expiry_date] = {
+                        'status': 'Fetching',
+                        'last_update': datetime.now().strftime('%H:%M:%S'),
+                        'records_count': 0
+                    }
+                
+                # Prepare API request parameters
+                params = {
+                    'instrument_key': 'NSE_INDEX|Nifty Bank',
+                    'expiry_date': self.expiry_date
+                }
+                headers = {
+                    'Accept': 'application/json',
+                    'Authorization': f'Bearer {self.access_token}'
+                }
+
+                # Make API request
+                response = requests.get('https://api.upstox.com/v2/option/chain', 
+                                     params=params, headers=headers)
+                data = response.json()
+
+                if data.get('status') == 'success' and 'data' in data:
+                    records_count = len(data['data'])
+                    
+                    # Process each record
+                    for item in data['data']:
+                        table_name = sanitize_table_name(self.expiry_date, item.get('underlying_key'))
+                        insert_data_into_db(self.db_config, table_name, item)
+
+                    with self.lock:
+                        self.progress_data[self.expiry_date] = {
+                            'status': 'Success',
+                            'last_update': datetime.now().strftime('%H:%M:%S'),
+                            'records_count': records_count
+                        }
+                
+                t.sleep(1)  # 1-second delay between fetches
+                
+            except Exception as e:
+                with self.lock:
+                    self.progress_data[self.expiry_date] = {
+                        'status': f'Error: {str(e)}',
+                        'last_update': datetime.now().strftime('%H:%M:%S'),
+                        'records_count': 0
+                    }
+                logging.error(f"Error in DataFetcher for {self.expiry_date}: {e}")
+                t.sleep(1)  # Wait before retrying
+
+class ProgressDisplay:
+    def __init__(self):
+        self.console = Console()
+        
+    def generate_table(self, progress_data):
+        table = Table(show_header=True, header_style="bold magenta", 
+                     title="Option Chain Data Fetching Progress")
+        table.add_column("Expiry Date", style="cyan")
+        table.add_column("Status", justify="center")
+        table.add_column("Last Update", justify="center")
+        table.add_column("Records", justify="right")
+        
+        for expiry, data in progress_data.items():
+            status_color = {
+                'Fetching': 'yellow',
+                'Success': 'green'
+            }.get(data['status'], 'red')
+            
+            table.add_row(
+                str(expiry),
+                f"[{status_color}]{data['status']}[/{status_color}]",
+                data['last_update'],
+                str(data['records_count'])
+            )
+        
+        return table
+
+def get_market_open_countdown():
+    """Calculate time remaining until market opens"""
+    now = datetime.now(pytz.timezone('Asia/Kolkata'))
+    today = now.date()
+    
+    # Market open time (9:15 AM)
+    market_open_time = datetime.combine(today, dt_time(9, 15)).replace(tzinfo=pytz.timezone('Asia/Kolkata'))
+    
+    # If current time is past market open, calculate for next day
+    if now.time() > dt_time(15, 30):
+        market_open_time += timedelta(days=1)
+        while market_open_time.weekday() >= 6:  # Skip weekend days
+            market_open_time += timedelta(days=1)
+    
+    # Check if market is closed due to holiday
+    holiday_response = market_holiday_date_wise_safe()
+    while holiday_response.get('status') == 'success' and \
+          market_open_time.strftime('%Y-%m-%d') in [holiday['date'] for holiday in holiday_response.get('data', [])]:
+        market_open_time += timedelta(days=1)
+        while market_open_time.weekday() >= 6:  # Skip weekend days
+            market_open_time += timedelta(days=1)
+    
+    time_to_market = market_open_time - now
+    return time_to_market
+
+def format_countdown(time_delta):
+    """Format timedelta into human-readable countdown"""
+    total_seconds = int(time_delta.total_seconds())
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+def market_holiday_date_wise_safe():
+    """
+    Safely fetch market holiday data with error handling and default return
+    """
+    try:
+        holiday_response = market_holiday_date_wise()
+        if holiday_response and holiday_response.get('status') == 'success':
+            return holiday_response
+        logging.warning("Failed to fetch holiday data, using empty list")
+        return {'status': 'success', 'data': []}
     except Exception as e:
-        logging.error(f"Error in fetch_and_insert_data: {e}")
+        logging.error(f"Error in market_holiday_date_wise: {e}")
+        return {'status': 'success', 'data': []}
+
+def main():
+    threads = []
+    try:
+        if not Path(ACCESS_TOKEN_FILE_PATH).exists():
+            rprint("[bold red]Error: Access token file not found.[/bold red]")
+            rprint(f"[yellow]Please create the file at: {ACCESS_TOKEN_FILE_PATH}[/yellow]")
+            rprint("[yellow]And add your Upstox API access token to it.[/yellow]")
+            return
+        # Initialize market calendar and expiry manager
+        market_calendar = MarketCalendar()
+        expiry_manager = ExpiryManager()
+
+        # Get database configuration
+        db_config = configDB()
+        check_and_create_db(db_config)
+
+        # Initialize progress display
+        progress_display = ProgressDisplay()
+
+        # Get the next 5 expiry dates
+        expiry_dates = expiry_manager.get_next_n_expiries(5)
+        logging.info(f"Found {len(expiry_dates)} expiry dates: {expiry_dates}")
+
+        # Get current year and month
+        now = datetime.now()
+
+        rprint(f"[bold green]Found {len(expiry_dates)} expiry dates for {now.strftime('%B %Y')}:[/bold green]")
+        for date in expiry_dates:
+            rprint(f"[blue]• {date}[/blue]")
+
+        # Wait for market to open with countdown
+        while not market_calendar.is_market_open():
+            countdown = get_market_open_countdown()
+            rprint(f"[yellow]Time until market opens: {format_countdown(countdown)}[/yellow]")
+            t.sleep(1)  # Update every second
+
+        rprint("[bold green]Market is now open. Starting data collection.[/bold green]")
+
+        # Initialize progress data
+        progress_data = {
+            str(date): {
+                'status': 'Initializing',
+                'last_update': '-',
+                'records_count': 0
+            } for date in expiry_dates
+        }
+
+        lock = threading.Lock()
+
+        # Initialize threads
+        for expiry_date in expiry_dates:
+            thread = DataFetcher(
+                expiry_date=expiry_date,
+                progress_data=progress_data,
+                lock=lock,
+                db_config=db_config,
+                market_calendar=market_calendar
+            )
+            threads.append(thread)
+            thread.start()
+            logging.info(f"Started thread for expiry date: {expiry_date}")
+
+        # Display progress with Rich
+        with Live(progress_display.generate_table(progress_data), refresh_per_second=1) as live:
+            while market_calendar.is_market_open():
+                if not any(thread.is_alive() for thread in threads):
+                    rprint("[bold yellow]All threads have completed. Restarting threads...[/bold yellow]")
+                    # Restart threads
+                    threads.clear()  # Clear existing threads
+                    for expiry_date in expiry_dates:
+                        thread = DataFetcher(expiry_date, progress_data, lock, db_config, market_calendar)
+                        thread.start()
+                        threads.append(thread)
+
+                live.update(progress_display.generate_table(progress_data))
+                t.sleep(1)
+
+            rprint("[bold red]Market is closed. Stopping data collection.[/bold red]")
+
+    except KeyboardInterrupt:
+        rprint("[bold red]Received keyboard interrupt. Shutting down...[/bold red]")
+    except Exception as e:
+        logging.error(f"Error in main: {e}")
+        rprint(f"[bold red]Error: {str(e)}[/bold red]")
+    finally:
+        # Clean shutdown
+        rprint("[yellow]Waiting for threads to complete...[/yellow]")
+        for thread in threads:  # Now threads is guaranteed to be a list
+            thread.join(timeout=1)
+        rprint("[green]Script terminated successfully.[/green]")
 
 if __name__ == '__main__':
-    # Set up logging with more detailed format
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler('market_timing.log')
-        ]
-    )
-    
-    # Database setup
-    db_config = configDB()
-    check_and_create_db(db_config)
-
-    fetcher = OptionChainFetcher()
-
-    # Schedule data fetching during market hours every second
-    schedule.every(1).seconds.do(fetch_and_insert_data)
-
-    logging.info("Starting market data fetching service...")
-    
-    while True:
-        try:
-            schedule.run_pending()
-            t.sleep(1)  # Changed from 0 to 1 second to reduce CPU usage
-        except Exception as e:
-            logging.error(f"Error in main loop: {e}")
+    main()

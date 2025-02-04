@@ -1,3 +1,6 @@
+# loginCLI.py
+
+from pathlib import Path
 import os
 import glob
 import gzip
@@ -22,17 +25,16 @@ from api.api import (apikey_order, apisecret_order, apikey_oc, apisecret_oc,
                      redirect_url, totp_secret, mobile_no, pin, 
                      nse, bse, mcx, complete, suspended)
 
-# Directory paths
-token_dir = "api/token"
-instrument_dir = "api/instrument"
-ini_dir = "api/ini"
-logs_dir = "api/logs"
+BASE_DIR = Path(__file__).parent
+TOKEN_DIR = BASE_DIR / "api" / "token"
+CONFIG_DIR = BASE_DIR / "api" / "ini"
+LOG_DIR = BASE_DIR / "api" / "logs"
+INSTRUMENT_DIR = BASE_DIR / "api" / "instrument"
 
 # Ensure required directories exist
 def ensure_directories():
-    for directory in [token_dir, instrument_dir, ini_dir, logs_dir]:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+    for directory in [TOKEN_DIR, INSTRUMENT_DIR, CONFIG_DIR, LOG_DIR]:
+        directory.mkdir(parents=True, exist_ok=True)
 
 # Generate and save access token
 def generate_access_token(code, client_id, client_secret, token_filename):
@@ -48,7 +50,7 @@ def generate_access_token(code, client_id, client_secret, token_filename):
     
     response = rq.post(url, headers=headers, data=data)
     jsr = response.json()
-    token_path = os.path.join(token_dir, token_filename)
+    token_path = TOKEN_DIR / token_filename  # Using Path operator
     
     with open(token_path, 'w') as file:
         file.write(jsr['access_token'])
@@ -131,7 +133,8 @@ def print_user_profile(user_data):
 
 # Process tokens from the directory and fetch profiles
 def process_tokens():
-    token_files = glob.glob(token_dir + '*.txt')
+    # Fixed: Use Path's glob method or convert to string and use proper path joining
+    token_files = list(TOKEN_DIR.glob('*.txt'))  # Using Path's glob method
     if not token_files:
         print(Fore.RED + "No tokens found in the directory." + Style.RESET_ALL)
         return
@@ -139,7 +142,7 @@ def process_tokens():
     for token_file in token_files:
         with open(token_file, 'r') as file:
             access_token = file.read().strip()
-            print(Fore.CYAN + f"\n🔑 Processing token from {os.path.basename(token_file)}" + Style.RESET_ALL)
+            print(Fore.CYAN + f"\n🔑 Processing token from {token_file.name}" + Style.RESET_ALL)
             get_user_profile(access_token)
 
 # Download and parse instrument JSONs
@@ -149,10 +152,11 @@ def download_instruments():
     instrument_links = {"nse": nse, "bse": bse, "mcx": mcx, "complete": complete, "suspended": suspended}
 
     for instrument, file_name in instrument_files.items():
-        file_path = os.path.join(instrument_dir, file_name)
-        if not os.path.exists(file_path) or today != get_file_date(file_path):
+        file_path = INSTRUMENT_DIR / file_name  # Using Path operator
+        if not file_path.exists() or today != get_file_date(file_path):
             print(f"Downloading {instrument} instrument data...")
-            download_and_extract(instrument_links[instrument], file_path)
+            download_and_extract(instrument_links[instrument], str(file_path))  # Convert Path to string
+
 
 # Download and extract .json.gz files
 def download_and_extract(url, output_file):
@@ -178,10 +182,6 @@ def get_file_date(file_path):
 
 # Create .ini configuration files
 def create_ini_files():
-    # databases = {
-    #     'NSE': 'historicalNSE-EQ-1min', 'BSE': 'historicalBSE-EQ-1min', 'MCX': 'historicalMCX-1min', 
-    #     'NFO': 'historicalNFO-1min', 'INDEX': 'historicalINDEX-1min', 'OptionChain': 'optionChain'
-    # }
     databases = {
         'OptionChain': 'OptionData'
     }
@@ -189,12 +189,15 @@ def create_ini_files():
 
     for db_name, db_file in databases.items():
         config['postgresql'] = {
-            'host': 'aws-postgresql-database-optiondata.c16gu26gwzeq.ap-south-1.rds.amazonaws.com', 'database': db_file, 'user': 'postgres', 'password': 'Vijay280801994', 'port': '5432'
+            'host': 'aws-postgresql-database-optiondata.c16gu26gwzeq.ap-south-1.rds.amazonaws.com',
+            'database': db_file,
+            'user': 'postgres',
+            'password': 'Vijay280801994',
+            'port': '5432'
         }
-        file_path = os.path.join(ini_dir, f'{db_name}.ini')
+        file_path = CONFIG_DIR / f'{db_name}.ini'  # Using Path operator
         with open(file_path, 'w') as configfile:
             config.write(configfile)
-
 # Main function
 def main():
     ensure_directories()
@@ -213,8 +216,8 @@ def main():
             generate_access_token(code, service["client_id"], service["client_secret"], service["token_filename"])
 
     process_tokens()
-    download_instruments()
-    create_ini_files()
+    # download_instruments()
+    # create_ini_files()
 
 if __name__ == "__main__":
     main()

@@ -26,9 +26,9 @@ from pathlib import Path
 # At the top of the file
 BASE_DIR = Path(__file__).parent
 ACCESS_TOKEN_FILE_PATH = BASE_DIR / "api" / "token" / "accessToken_oc.txt"
-CONFIG_FILE_PATH = BASE_DIR / "api" / "ini" / "OptionChain.ini"
+CONFIG_FILE_PATH = BASE_DIR / "api" / "ini" / "test.ini"
 LOG_DIRECTORY = BASE_DIR / "api" / "logs"
-LOG_FILE = LOG_DIRECTORY / "Bankex.log"
+LOG_FILE = LOG_DIRECTORY / "Nifty50.log"
 
 # Ensure the directory exists
 def ensure_directory_exists(directory):
@@ -149,7 +149,7 @@ class MarketCalendar:
         
         # Regular market hours (9:15 AM to 3:30 PM)
         regular_market_open = (
-            dt_time(9, 15) <= current_time <= dt_time(15, 30)
+            dt_time(0, 15) <= current_time <= dt_time(15, 30)
         )
         
         if regular_market_open:
@@ -174,85 +174,55 @@ class ExpiryManager:
         self.progress_data = {}
         self.lock = threading.Lock()
         
-    # def get_next_n_expiries(self, n=5):
-    #     """Get the next n valid Tuesday expiry dates starting from current date."""
-    #     current_date = datetime.now()
-    #     expiries = []
-    #     month = current_date.month
-    #     year = current_date.year
-        
-    #     while len(expiries) < n:
-    #         # Get all Tuesday expiries for current month
-    #         month_expiries = self.get_month_tuesday_expiries(year, month)
-            
-    #         # Filter out past dates if we're looking at current month
-    #         if month == current_date.month and year == current_date.year:
-    #             month_expiries = [date for date in month_expiries if date >= current_date.date()]
-            
-    #         # Add expiries until we reach n or run out of dates
-    #         for expiry in month_expiries:
-    #             if len(expiries) < n:
-    #                 expiries.append(expiry)
-    #             else:
-    #                 break
-            
-    #         # Move to next month if we still need more dates
-    #         if len(expiries) < n:
-    #             if month == 12:
-    #                 month = 1
-    #                 year += 1
-    #             else:
-    #                 month += 1
-                    
-    #     return expiries
-    def get_next_n_expiries(self, n=3):
-        """Get the next n monthly last tuesday expiry dates starting from current date."""
+    def get_next_n_expiries(self, n=5):
+        """Get the next n valid thursday expiry dates starting from current date."""
         current_date = datetime.now()
         expiries = []
         month = current_date.month
         year = current_date.year
         
         while len(expiries) < n:
-            # Find the last tuesday of the current month
-            month_last_day = (datetime(year, month, 1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            # Get all thursday expiries for current month
+            month_expiries = self.get_month_thursday_expiries(year, month)
             
-            # Go backwards to find the last tuesday
-            last_tuesday = month_last_day
-            while last_tuesday.weekday() != 1:  # 1 represents tuesday
-                last_tuesday -= timedelta(days=1)
+            # Filter out past dates if we're looking at current month
+            if month == current_date.month and year == current_date.year:
+                month_expiries = [date for date in month_expiries if date >= current_date.date()]
             
-            # Check if this tuesday is in the future or is today
-            if last_tuesday.date() >= current_date.date():
-                # Verify it's a valid trading day
-                if self.is_valid_trading_day(last_tuesday.date()):
-                    expiries.append(last_tuesday.date())
+            # Add expiries until we reach n or run out of dates
+            for expiry in month_expiries:
+                if len(expiries) < n:
+                    expiries.append(expiry)
+                else:
+                    break
             
-            # Move to next month
-            if month == 12:
-                month = 1
-                year += 1
-            else:
-                month += 1
-        
+            # Move to next month if we still need more dates
+            if len(expiries) < n:
+                if month == 12:
+                    month = 1
+                    year += 1
+                else:
+                    month += 1
+                    
         return expiries
     
-    def get_month_tuesday_expiries(self, year, month):
-        """Get all Tuesday expiry dates for a given month."""
+    def get_month_thursday_expiries(self, year, month):
+        """Get all thursday expiry dates for a given month."""
         first_day = datetime(year, month, 1)
         last_day = (first_day + timedelta(days=32)).replace(day=1) - timedelta(days=1)
         
-        tuesdays = []
+        thursdays = []
         current_day = first_day
         
         while current_day <= last_day:
-            if current_day.weekday() == 1:  # Tuesday
-                tuesday_date = current_day.date()
+            if current_day.weekday() == 3:  # thursday
+                thursday_date = current_day.date()
                 # Check if it's not a holiday
-                if self.is_valid_trading_day(tuesday_date):
-                    tuesdays.append(tuesday_date)
+                if self.is_valid_trading_day(thursday_date):
+                    thursdays.append(thursday_date)
             current_day += timedelta(days=1)
             
-        return tuesdays
+        return thursdays
     
     def is_valid_trading_day(self, date):
         """Check if the given date is a valid trading day."""
@@ -513,7 +483,7 @@ class DataFetcher(threading.Thread):
                 
                 # Prepare API request parameters
                 params = {
-                    'instrument_key': 'BSE_INDEX|BANKEX',
+                    'instrument_key': 'NSE_INDEX|Nifty 50',
                     'expiry_date': self.expiry_date
                 }
                 headers = {

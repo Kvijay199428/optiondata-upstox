@@ -1,3 +1,5 @@
+# OC_Sensex.py
+
 import sys
 import requests
 import psycopg2
@@ -12,7 +14,6 @@ import schedule
 import pytz
 import holidays
 from holiday.market_holiday_date_wise import market_holiday_date_wise
-from pathlib import Path
 import threading
 from queue import Queue
 from rich.console import Console
@@ -20,27 +21,64 @@ from rich.live import Live
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
 from rich import print as rprint
+from pathlib import Path
 
-# Initialize Rich console
-console = Console()
+# At the top of the file
+BASE_DIR = Path(__file__).parent
+ACCESS_TOKEN_FILE_PATH = BASE_DIR / "api" / "token" / "accessToken_oc.txt"
+CONFIG_FILE_PATH = BASE_DIR / "api" / "ini" / "OptionChain.ini"
+LOG_DIRECTORY = BASE_DIR / "api" / "logs"
+LOG_FILE = LOG_DIRECTORY / "Sensex.log"
 
 # Ensure the directory exists
-log_directory = "api/logs"
-if not os.path.exists(log_directory):
-    os.makedirs(log_directory)
+def ensure_directory_exists(directory):
+    """Create directory if it doesn't exist."""
+    try:
+        os.makedirs(directory, exist_ok=True)
+        logging.debug(f"Ensuring directory exists: {directory}")
+    except Exception as e:
+        logging.error(f"Error creating directory {directory}: {e}")
+        raise
 
-# Configure logging with rotating file handler
-log_file = "api/logs/Sensex.log"
-handler = RotatingFileHandler(log_file, maxBytes=5000000, backupCount=5)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
+# Enhanced Logging Configuration
+def setup_logging():
+    """Set up comprehensive logging with detailed configuration."""
+    try:
+        # Ensure log directory exists
+        ensure_directory_exists(LOG_DIRECTORY)
 
-# Root logger
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
+        # Configure logging with more detailed rotating file handler
+        handler = RotatingFileHandler(
+            LOG_FILE, 
+            maxBytes=10*1024*1024,  # 10 MB 
+            backupCount=10  # Keep more backup logs
+        )
+        
+        # More detailed formatter
+        formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(funcName)s() - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        handler.setFormatter(formatter)
 
-logger.info("Starting real-time data insertion script.")
+        # Console handler for immediate visibility
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        console_handler.setLevel(logging.INFO)
+
+        # Root logger configuration
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        logger.addHandler(console_handler)
+
+        logging.info("Logging system initialized successfully.")
+    except Exception as e:
+        print(f"Critical error setting up logging: {e}")
+        sys.exit(1)
+
+# Call logging setup at the start
+setup_logging()
 
 class MarketCalendar:
     def __init__(self):
@@ -111,7 +149,7 @@ class MarketCalendar:
         
         # Regular market hours (9:15 AM to 3:30 PM)
         regular_market_open = (
-            dt_time(1, 25) <= current_time <= dt_time(15, 30)
+            dt_time(9, 15) <= current_time <= dt_time(15, 30)
         )
         
         if regular_market_open:
@@ -128,20 +166,6 @@ class MarketCalendar:
         except Exception as e:
             logging.error(f"Error converting milliseconds {milliseconds}: {e}")
             return None
-        
-def market_holiday_date_wise_safe():
-    """
-    Safely fetch market holiday data with error handling and default return
-    """
-    try:
-        holiday_response = market_holiday_date_wise()
-        if holiday_response and holiday_response.get('status') == 'success':
-            return holiday_response
-        logging.warning("Failed to fetch holiday data, using empty list")
-        return {'status': 'success', 'data': []}
-    except Exception as e:
-        logging.error(f"Error in market_holiday_date_wise: {e}")
-        return {'status': 'success', 'data': []}
 
 class ExpiryManager:
     def __init__(self):
@@ -220,20 +244,33 @@ def get_current_timestamp():
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S") + f".{now.microsecond // 1000:03d}"
 
-def configDB(filename="api/ini/OptionChain.ini", section="postgresql"):
-    parser = ConfigParser()
-    parser.read(filename)
-    db = {}
-    if parser.has_section(section):
-        params = parser.items(section)
-        for param in params:
-            db[param[0]] = param[1]
-    else:
-        logging.error(f"Section {section} not found in {filename} file.")
-        raise Exception(f'Section {section} not found in {filename} file.')
-    return db
+def configDB(filename=CONFIG_FILE_PATH, section="postgresql"):
+    """Enhanced database configuration with more robust error handling."""
+    try:
+        logging.debug(f"Attempting to read database configuration from {filename}")
+        parser = ConfigParser()
+        
+        # Ensure file exists and is readable
+        if not os.path.exists(filename):
+            logging.error(f"Configuration file not found: {filename}")
+            raise FileNotFoundError(f"Configuration file not found: {filename}")
+        
+        parser.read(filename)
+        
+        if not parser.has_section(section):
+            logging.error(f"Section {section} not found in {filename}")
+            raise ValueError(f'Section {section} not found in {filename} file.')
+        
+        db = dict(parser.items(section))
+        logging.info(f"Successfully loaded database configuration for section: {section}")
+        return db
+    
+    except Exception as e:
+        logging.error(f"Error reading database configuration: {e}")
+        raise
 
 def check_and_create_db(db_config):
+    """Check and create database if not exists."""
     logging.debug("Checking if the database exists.")
     conn = None
     try:
@@ -261,18 +298,21 @@ def check_and_create_db(db_config):
             conn.close()
 
 def sanitize_table_name(expiry_date, instrument_key):
-    logging.debug(f"Expiry Date is {expiry_date}.")
+    """Sanitize table name for PostgreSQL."""
+    logging.debug(f"Sanitizing table name for expiry {expiry_date} and instrument {instrument_key}")
     sanitized_instrument_key = instrument_key.replace(' ', '_').replace('|', '_').lower()
     sanitized_expiry_date = str(expiry_date).replace('-', '_')
     return f"{sanitized_instrument_key}_{sanitized_expiry_date}"
 
 def insert_data_into_db(db_config, table_name, data):
+    """Insert option chain data into PostgreSQL database."""
     logging.debug(f"Inserting data into table {table_name}.")
     conn = None
     try:
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor()
 
+        # Create table if not exists
         create_table_query = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             timestamp TIMESTAMP PRIMARY KEY,
@@ -311,6 +351,7 @@ def insert_data_into_db(db_config, table_name, data):
         """
         cur.execute(create_table_query)
 
+        # Prepare insert query
         insert_query = f"""
         INSERT INTO {table_name} (timestamp, expiry, strike_price, underlying_spot_price, call_ltp, 
             call_close_price, call_volume, call_oi, call_bid_price, call_bid_qty, call_ask_price, 
@@ -321,6 +362,7 @@ def insert_data_into_db(db_config, table_name, data):
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         
+        # Prepare values for insertion
         values = (
             get_current_timestamp(),
             data.get('expiry'),
@@ -356,6 +398,7 @@ def insert_data_into_db(db_config, table_name, data):
             data.get('underlying_key')
         )
 
+        # Create indexes to improve query performance
         cur.execute(sql.SQL("""
             CREATE INDEX IF NOT EXISTS {} ON {} (underlying_key)
         """).format(
@@ -375,9 +418,10 @@ def insert_data_into_db(db_config, table_name, data):
             sql.Identifier(table_name)
         ))
 
+        # Execute insert query
         cur.execute(insert_query, values)
         conn.commit()
-        logging.info("Data inserted successfully.")
+        logging.info(f"Data inserted successfully into {table_name}")
         cur.close()
 
     except Exception as error:
@@ -386,8 +430,16 @@ def insert_data_into_db(db_config, table_name, data):
         if conn is not None:
             conn.close()
 
-class DataFetcher(threading.Thread):
+def validate_access_token(token):
+    """Validate that the access token is not empty and has the expected format"""
+    if not token:
+        raise ValueError("Access token is empty")
+    if not token.strip():
+        raise ValueError("Access token contains only whitespace")
+    # Add any other validation specific to your Upstox API token format
+    return token.strip()
 
+class DataFetcher(threading.Thread):
     def __init__(self, expiry_date, progress_data, lock, db_config, market_calendar):
         super().__init__()
         self.expiry_date = expiry_date
@@ -396,6 +448,28 @@ class DataFetcher(threading.Thread):
         self.db_config = db_config
         self.market_calendar = market_calendar
         self.daemon = True
+        
+        # Retrieving access token with enhanced error handling
+        try:
+            token_path = Path(ACCESS_TOKEN_FILE_PATH)
+            if not token_path.exists():
+                raise FileNotFoundError(
+                    f"\nAccess token file not found at: {token_path}\n"
+                    f"Please ensure you have:\n"
+                    f"1. Created the directory: {token_path.parent}\n"
+                    f"2. Created the file: {token_path.name}\n"
+                    f"3. Added your Upstox API access token to the file"
+                )
+            
+            with open(token_path, 'r') as file:
+                self.access_token = validate_access_token(file.read())
+                
+            if not self.access_token:
+                logging.warning("Access token is empty")
+        
+        except Exception as e:
+            logging.error(f"Error reading access token: {e}")
+            raise
         
     def run(self):
         while self.market_calendar.is_market_open():
@@ -407,25 +481,14 @@ class DataFetcher(threading.Thread):
                         'records_count': 0
                     }
                 
-                # Get access token
-                current_dir = Path(__file__).parent
-                token_path = current_dir / 'api' / 'token' / 'accessToken_oc.txt'
-                
-                try:
-                    with open(token_path, 'r') as file:
-                        access_token = file.read().strip()
-                except FileNotFoundError:
-                    logging.error("Access token file not found.")
-                    continue
-
-                # Prepare API request
+                # Prepare API request parameters
                 params = {
                     'instrument_key': 'BSE_INDEX|SENSEX',
                     'expiry_date': self.expiry_date
                 }
                 headers = {
                     'Accept': 'application/json',
-                    'Authorization': f'Bearer {access_token}'
+                    'Authorization': f'Bearer {self.access_token}'
                 }
 
                 # Make API request
@@ -486,18 +549,19 @@ class ProgressDisplay:
             )
         
         return table
+
 def get_market_open_countdown():
     """Calculate time remaining until market opens"""
     now = datetime.now(pytz.timezone('Asia/Kolkata'))
     today = now.date()
     
     # Market open time (9:15 AM)
-    market_open_time = datetime.combine(today, dt_time(1, 25)).replace(tzinfo=pytz.timezone('Asia/Kolkata'))
+    market_open_time = datetime.combine(today, dt_time(9, 15)).replace(tzinfo=pytz.timezone('Asia/Kolkata'))
     
     # If current time is past market open, calculate for next day
-    if now.time() > dt_time(1, 25):
+    if now.time() > dt_time(15, 30):
         market_open_time += timedelta(days=1)
-        while market_open_time.weekday() >= 6:  # Skip only Sunday
+        while market_open_time.weekday() >= 6:  # Skip weekend days
             market_open_time += timedelta(days=1)
     
     # Check if market is closed due to holiday
@@ -505,7 +569,7 @@ def get_market_open_countdown():
     while holiday_response.get('status') == 'success' and \
           market_open_time.strftime('%Y-%m-%d') in [holiday['date'] for holiday in holiday_response.get('data', [])]:
         market_open_time += timedelta(days=1)
-        while market_open_time.weekday() >= 6:  # Skip only Sunday
+        while market_open_time.weekday() >= 6:  # Skip weekend days
             market_open_time += timedelta(days=1)
     
     time_to_market = market_open_time - now
@@ -518,8 +582,28 @@ def format_countdown(time_delta):
     minutes, seconds = divmod(remainder, 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
-def main():
+def market_holiday_date_wise_safe():
+    """
+    Safely fetch market holiday data with error handling and default return
+    """
     try:
+        holiday_response = market_holiday_date_wise()
+        if holiday_response and holiday_response.get('status') == 'success':
+            return holiday_response
+        logging.warning("Failed to fetch holiday data, using empty list")
+        return {'status': 'success', 'data': []}
+    except Exception as e:
+        logging.error(f"Error in market_holiday_date_wise: {e}")
+        return {'status': 'success', 'data': []}
+
+def main():
+    threads = []
+    try:
+        if not Path(ACCESS_TOKEN_FILE_PATH).exists():
+            rprint("[bold red]Error: Access token file not found.[/bold red]")
+            rprint(f"[yellow]Please create the file at: {ACCESS_TOKEN_FILE_PATH}[/yellow]")
+            rprint("[yellow]And add your Upstox API access token to it.[/yellow]")
+            return
         # Initialize market calendar and expiry manager
         market_calendar = MarketCalendar()
         expiry_manager = ExpiryManager()
@@ -548,7 +632,6 @@ def main():
             rprint(f"[yellow]Time until market opens: {format_countdown(countdown)}[/yellow]")
             t.sleep(1)  # Update every second
 
-        
         rprint("[bold green]Market is now open. Starting data collection.[/bold green]")
 
         # Initialize progress data
@@ -562,10 +645,7 @@ def main():
 
         lock = threading.Lock()
 
-        # Initialize thread container
-        threads = []
-
-        # Create and start threads for each expiry date
+        # Initialize threads
         for expiry_date in expiry_dates:
             thread = DataFetcher(
                 expiry_date=expiry_date,
@@ -584,7 +664,7 @@ def main():
                 if not any(thread.is_alive() for thread in threads):
                     rprint("[bold yellow]All threads have completed. Restarting threads...[/bold yellow]")
                     # Restart threads
-                    threads = []
+                    threads.clear()  # Clear existing threads
                     for expiry_date in expiry_dates:
                         thread = DataFetcher(expiry_date, progress_data, lock, db_config, market_calendar)
                         thread.start()
@@ -603,7 +683,7 @@ def main():
     finally:
         # Clean shutdown
         rprint("[yellow]Waiting for threads to complete...[/yellow]")
-        for thread in threads:
+        for thread in threads:  # Now threads is guaranteed to be a list
             thread.join(timeout=1)
         rprint("[green]Script terminated successfully.[/green]")
 
