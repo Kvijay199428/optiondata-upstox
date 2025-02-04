@@ -1,6 +1,6 @@
-historic_optionChain/api/token
-historic_optionChain/api/logs
-historic_optionChain/api/instrument
+/historic_optionChain/api/token/
+/historic_optionChain/api/logs/
+/historic_optionChain/api/instrument/
 
 /node_modules/
 /venv/
@@ -8,3 +8,9 @@ historic_optionChain/api/instrument
 
 /aws/
 /.venv/
+
+aws/aws-credential.ini
+aws/aws-instance-server/password.txt
+aws/aws-instance-server/window-server-aws.rdp
+aws/aws-instance-server/windows-server-aws.pem
+aws/aws-postgresql/user-password.txt
