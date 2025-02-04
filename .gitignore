@@ -1,6 +1,10 @@
-historic_optionChain\api\token
-historic_optionChain\api\logs
-historic_optionChain\api\instrument
+historic_optionChain/api/token
+historic_optionChain/api/logs
+historic_optionChain/api/instrument
 
 /node_modules/
 /venv/
+/historic_optionChain/api/api.py
+
+/aws/
+/.venv/
